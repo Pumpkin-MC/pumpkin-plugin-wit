@@ -298,6 +298,11 @@ interface event {
         tick: s32
     }
 
+    record server-tick-end-event-data {
+        tick: s32,
+        duration-nanos: s64
+    }
+
     record packet-received-event-data {
         player: player,
         packet: serverbound-packet,
@@ -346,6 +351,7 @@ interface event {
         spawn-change-event,
         server-broadcast-event,
         server-tick-start-event,
+        server-tick-end-event,
         packet-received-event,
         packet-sent-event,
     }
@@ -386,6 +392,7 @@ interface event {
         spawn-change-event(spawn-change-event-data),
         server-broadcast-event(server-broadcast-event-data),
         server-tick-start-event(server-tick-start-event-data),
+        server-tick-end-event(server-tick-end-event-data),
         packet-received-event(packet-received-event-data),
         packet-sent-event(packet-sent-event-data),
     }
