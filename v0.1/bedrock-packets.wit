@@ -134,6 +134,10 @@ interface bedrock-packets {
     soft-enums: list<string>,
     constraints: list<string>,
   }
+  record c-boss-event {
+    boss-entity-id: string,
+    action: string,
+  }
   record c-chunk-radius-update {
     chunk-radius: s32,
   }
@@ -266,6 +270,20 @@ interface bedrock-packets {
     world-template-version: string,
     resource-packs: list<string>,
   }
+  record c-set-display-objective {
+    display-slot: string,
+    objective-name: string,
+    display-name: string,
+    criteria-name: string,
+    sort-order: s32,
+  }
+  record c-set-score {
+    action: s32,
+    entries: list<string>,
+  }
+  record c-remove-objective {
+    objective-name: string,
+  }
   record c-set-actor-data {
     actor-runtime-id: string,
     metadata: string,
@@ -327,6 +345,11 @@ interface bedrock-packets {
     server-join-information: option<string>,
     telemetry: string,
   }
+  record c-transfer {
+    address: string,
+    port: s32,
+    reload-world: bool,
+  }
   record c-update-abilities {
     target-player-raw-id: s64,
     player-permission: u8,
@@ -364,6 +387,7 @@ interface bedrock-packets {
   }
   variant clientbound-packet {
     c-available-commands(c-available-commands),
+    c-boss-event(c-boss-event),
     c-chunk-radius-update(c-chunk-radius-update),
     c-container-open(c-container-open),
     c-correct-player-move(c-correct-player-move),
@@ -387,6 +411,9 @@ interface bedrock-packets {
     c-unconnected-pong(c-unconnected-pong),
     c-resource-pack-stack-packet(c-resource-pack-stack-packet),
     c-resource-packs-info(c-resource-packs-info),
+    c-set-display-objective(c-set-display-objective),
+    c-set-score(c-set-score),
+    c-remove-objective(c-remove-objective),
     c-set-actor-data(c-set-actor-data),
     c-set-actor-motion(c-set-actor-motion),
     c-set-health(c-set-health),
@@ -394,6 +421,7 @@ interface bedrock-packets {
     c-set-time(c-set-time),
     c-set-title(c-set-title),
     c-start-game(c-start-game),
+    c-transfer(c-transfer),
     c-update-abilities(c-update-abilities),
     c-update-attributes(c-update-attributes),
   }

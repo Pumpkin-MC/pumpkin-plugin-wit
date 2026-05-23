@@ -12,7 +12,7 @@ interface java-packets {
     command: string,
   }
   record s-chat-message {
-    message: string,
+    message: list<string>,
     timestamp: s64,
     salt: s64,
     signature: option<list<list<u8>>>,
@@ -61,7 +61,7 @@ interface java-packets {
     button-id: s32,
   }
   record s-cookie-response {
-    key: string,
+    key: list<string>,
     payload: option<list<list<u8>>>,
   }
   record s-custom-click-action {
@@ -69,7 +69,7 @@ interface java-packets {
     payload: option<list<list<u8>>>,
   }
   record s-custom-payload {
-    channel: string,
+    channel: list<string>,
     data: list<list<u8>>,
   }
   record s-interact {
@@ -187,10 +187,10 @@ interface java-packets {
   record s-update-sign {
     location: tuple<s32, s32, s32>,
     is-front-text: bool,
-    line-1: string,
-    line-2: string,
-    line-3: string,
-    line-4: string,
+    line-1: list<string>,
+    line-2: list<string>,
+    line-3: list<string>,
+    line-4: list<string>,
   }
   record s-use-item {
     hand: s32,
@@ -443,7 +443,7 @@ interface java-packets {
     sender: uuid,
     index: s32,
     message-signature: option<list<list<u8>>>,
-    message: string,
+    message: list<string>,
     timestamp: s64,
     salt: s64,
     previous-messages: list<list<string>>,
