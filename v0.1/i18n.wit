@@ -11,6 +11,12 @@ interface i18n {
     /// The localized string, falling back to English or the key itself.
     translate: func(key: string, locale: locale) -> string;
 
+    /// Like `translate`, but also substitutes `%s` / `%1$s` / `{0}` placeholders.
+    ///
+    /// # Arguments
+    /// * `substitutions`: Replacement strings for positional placeholders.
+    translate-text: func(key: string, locale: locale, substitutions: list<string>) -> string;
+
     /// Loads custom translations from a JSON string.
     ///
     /// # Arguments
