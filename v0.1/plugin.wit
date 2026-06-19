@@ -1,8 +1,8 @@
+package pumpkin:plugin@0.1.0;
+
 /// The main entry point for a Pumpkin plugin.
 /// This world defines the exports that the plugin must provide to the host
 /// and the imports that the host provides to the plugin.
-package pumpkin:plugin@0.1.0;
-
 world plugin {
     use context.{context};
     use event.{event};
