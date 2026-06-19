@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 /// Provides types and utilities for displaying rich dialogs to Java Edition players.
 /// These dialogs support various layouts, body elements (text and items), 
 /// and interactive inputs (checkboxes, text fields, sliders).

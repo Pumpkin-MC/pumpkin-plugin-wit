@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 interface gui {
     use text.{text-component};
     use common.{click-type};

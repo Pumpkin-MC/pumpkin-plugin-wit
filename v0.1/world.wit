@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 interface %world {
     use common.{position, entity-pose, block-pos};
     use block-entity.{block-entity, command-block-entity, block-entity-type};

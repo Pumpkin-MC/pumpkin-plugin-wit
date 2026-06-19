@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 interface forms {
     use text.{text-component};
 

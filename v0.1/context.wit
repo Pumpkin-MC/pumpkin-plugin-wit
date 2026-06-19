@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 /// The core context provided to a plugin during initialization and event handling.
 interface context {
     use server.{server};

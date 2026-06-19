@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 /// Represents a player connected to the Minecraft server.
 interface player {
     use common.{hand, position, game-mode};
