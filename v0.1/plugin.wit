@@ -29,7 +29,6 @@ world plugin {
     import java-dialogs;
     import java-packets;
     import logging;
-    import metadata;
     import particles;
     import permission;
     import player;
