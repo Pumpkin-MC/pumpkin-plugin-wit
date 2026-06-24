@@ -89,6 +89,16 @@ interface event {
         cancelled: bool
     }
 
+    record player-respawn-event-data {
+        player: player,
+        previous-world: %world,
+        respawned-world: %world,
+        position: position,
+        yaw: f32,
+        pitch: f32,
+        alive: bool
+    }
+
     record player-exp-change-event-data {
         player: player,
         amount: s32
@@ -331,6 +341,7 @@ interface event {
         player-move-event,
         player-teleport-event,
         player-change-world-event,
+        player-respawn-event,
         player-exp-change-event,
         player-item-held-event,
         player-changed-main-hand-event,
@@ -372,6 +383,7 @@ interface event {
         player-move-event(player-move-event-data),
         player-teleport-event(player-teleport-event-data),
         player-change-world-event(player-change-world-event-data),
+        player-respawn-event(player-respawn-event-data),
         player-exp-change-event(player-exp-change-event-data),
         player-item-held-event(player-item-held-event-data),
         player-changed-main-hand-event(player-changed-main-hand-event-data),
