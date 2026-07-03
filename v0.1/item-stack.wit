@@ -82,21 +82,6 @@ interface item-stack {
         /// Returns a plugin-owned NBT value from minecraft:custom_data.
         get-custom-data: func(namespace: string, key: string) -> option<nbt-tree>;
 
-        /// Sets a plugin-owned boolean value in minecraft:custom_data.
-        set-custom-data-bool: func(namespace: string, key: string, value: bool);
-        /// Returns a plugin-owned boolean value from minecraft:custom_data.
-        get-custom-data-bool: func(namespace: string, key: string) -> option<bool>;
-
-        /// Sets a plugin-owned string value in minecraft:custom_data.
-        set-custom-data-string: func(namespace: string, key: string, value: string);
-        /// Returns a plugin-owned string value from minecraft:custom_data.
-        get-custom-data-string: func(namespace: string, key: string) -> option<string>;
-
-        /// Sets a plugin-owned byte array value in minecraft:custom_data.
-        set-custom-data-bytes: func(namespace: string, key: string, value: list<u8>);
-        /// Returns a plugin-owned byte array value from minecraft:custom_data.
-        get-custom-data-bytes: func(namespace: string, key: string) -> option<list<u8>>;
-
         /// Removes one plugin-owned custom data key from minecraft:custom_data.
         remove-custom-data: func(namespace: string, key: string);
         /// Returns whether a plugin-owned custom data key exists in minecraft:custom_data.
