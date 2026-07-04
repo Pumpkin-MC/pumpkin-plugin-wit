@@ -16,6 +16,34 @@ interface item-stack {
         value: list<u8>,
     }
 
+    /// Represents one entry in an NBT compound tag.
+    record nbt-entry {
+        key: string,
+        value: u32,
+    }
+
+    /// Represents a Minecraft NBT tag tree.
+    record nbt-tree {
+        root: u32,
+        tags: list<nbt-tag>,
+    }
+
+    /// Represents a Minecraft NBT tag.
+    variant nbt-tag {
+        byte(s8),
+        short(s16),
+        int(s32),
+        long(s64),
+        float(f32),
+        double(f64),
+        byte-array(list<s8>),
+        string-tag(string),
+        list-tag(list<u32>),
+        compound(list<nbt-entry>),
+        int-array(list<s32>),
+        long-array(list<s64>),
+    }
+
     resource item-stack {
         constructor(registry-key: string, count: u8);
 
@@ -48,6 +76,16 @@ interface item-stack {
         get-custom-name: func() -> option<text-component>;
         /// Sets the custom name of this item stack.
         set-custom-name: func(name: option<text-component>);
+
+        /// Sets a plugin-owned NBT value in minecraft:custom_data.
+        set-custom-data: func(namespace: string, key: string, value: nbt-tree);
+        /// Returns a plugin-owned NBT value from minecraft:custom_data.
+        get-custom-data: func(namespace: string, key: string) -> option<nbt-tree>;
+
+        /// Removes one plugin-owned custom data key from minecraft:custom_data.
+        remove-custom-data: func(namespace: string, key: string);
+        /// Returns whether a plugin-owned custom data key exists in minecraft:custom_data.
+        has-custom-data: func(namespace: string, key: string) -> bool;
 
         /// Returns all data components on this item stack.
         get-components: func() -> list<data-component-value>;

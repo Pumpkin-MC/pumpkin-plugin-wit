@@ -290,6 +290,15 @@ interface event {
         cancelled: bool
     }
 
+    enum server-load-type {
+        startup,
+        reload,
+    }
+
+    record server-load-event-data {
+        load-type: server-load-type
+    }
+
     record spawn-change-event-data {
         target-world: %world,
         previous-position: block-pos,
@@ -365,6 +374,7 @@ interface event {
         bedrock-form-response-event,
         custom-click-action-event,
         server-command-event,
+        server-load-event,
         spawn-change-event,
         server-broadcast-event,
         server-tick-start-event,
@@ -407,6 +417,7 @@ interface event {
         bedrock-form-response-event(bedrock-form-response-event-data),
         custom-click-action-event(custom-click-action-event-data),
         server-command-event(server-command-event-data),
+        server-load-event(server-load-event-data),
         spawn-change-event(spawn-change-event-data),
         server-broadcast-event(server-broadcast-event-data),
         server-tick-start-event(server-tick-start-event-data),
