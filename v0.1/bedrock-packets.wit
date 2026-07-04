@@ -168,13 +168,6 @@ interface bedrock-packets {
     inventory-layout: u8,
     crafting-layout: u8,
   }
-  record s-set-player-inventory-options {
-    left-inventory-tab: u8,
-    right-inventory-tab: u8,
-    filtering: bool,
-    inventory-layout: u8,
-    crafting-layout: u8,
-  }
   record s-text {
     needs-translation: bool,
     r-type: string,
