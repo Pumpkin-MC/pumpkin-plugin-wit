@@ -507,5 +507,13 @@ interface %world {
 
         /// Returns the block entity at the specified position, if any.
         get-block-entity: func(pos: block-pos) -> option<block-entity-type>;
+
+        /// Restores a block entity from raw NBT bytes at the given position.
+        /// The NBT must contain a valid "id" field (e.g. "minecraft:chest").
+        set-block-entity-nbt: func(pos: block-pos, nbt-data: list<u8>) -> result<_, string>;
     }
+
+    /// Resolves a block name and optional properties to a block state ID.
+    /// Returns none if the block name is unknown.
+    resolve-block-state: func(name: string, properties: list<tuple<string, string>>) -> option<u16>;
 }
