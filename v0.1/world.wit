@@ -516,4 +516,14 @@ interface %world {
     /// Resolves a block name and optional properties to a block state ID.
     /// Returns none if the block name is unknown.
     resolve-block-state: func(name: string, properties: list<tuple<string, string>>) -> option<u16>;
+
+    /// A block's registry name and its property key-value pairs for a state ID.
+    record block-state-info {
+        name: string,
+        properties: list<tuple<string, string>>,
+    }
+
+    /// Resolves a block state ID back to its block name and properties.
+    /// Returns none if the state ID is unknown.
+    block-state-to-info: func(state-id: u16) -> option<block-state-info>;
 }
