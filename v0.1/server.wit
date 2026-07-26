@@ -29,6 +29,8 @@ interface server {
         cpu-count: option<u32>,
         total-memory: option<u64>,
         used-memory: option<u64>,
+        /// Resident set size of the Pumpkin server process, in bytes.
+        process-memory: option<u64>,
         os-name: option<string>,
         os-version: option<string>,
         pumpkin-version: string,
