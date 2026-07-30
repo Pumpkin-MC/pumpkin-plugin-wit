@@ -32,30 +32,30 @@ interface config {
 
     resource config {
         /// Get a value from the config, or `none` if the key does not exist.
-        /// 
+        ///
         /// The format of the `key` works just like in most programming languages.
         /// Arrays are indexed using [square brackets] and nested fields are
-        /// seperated by `.` dots.
-        /// Example: `players[0].uuid` 
+        /// separated by `.` dots.
+        /// Example: `players[0].uuid`
         get: func(key: string) -> option<config-tree>;
         /// Same as `get`, except inserts the provided default into the config if the
         /// key does not exist.
         ///
         /// If the config does not exist, it will be created.
-        /// 
+        ///
         /// The format of the `key` works just like in most programming languages.
         /// Arrays are indexed using [square brackets] and nested fields are
-        /// seperated by `.` dots.
-        /// Example: `players[0].uuid` 
+        /// separated by `.` dots.
+        /// Example: `players[0].uuid`
         get-or-default: func(key: string, default: config-tree) -> config-tree;
         /// Set a value in the config.
         ///
         /// If the config does not exist, it will be created.
-        /// 
+        ///
         /// The format of the `key` works just like in most programming languages.
         /// Arrays are indexed using [square brackets] and nested fields are
-        /// seperated by `.` dots.
-        /// Example: `players[0].uuid` 
+        /// separated by `.` dots.
+        /// Example: `players[0].uuid`
         set: func(key: string, value: config-tree);
         /// Remove the field from the config. Unlike setting the field to
         /// `%option(none)`, this is guaranteed to remove the field instead
@@ -63,22 +63,22 @@ interface config {
         ///
         /// Returns `true` if the specified key existed in the config, and `false`
         /// if it did not.
-        /// 
+        ///
         /// The format of the `key` works just like in most programming languages.
         /// Arrays are indexed using [square brackets] and nested fields are
-        /// seperated by `.` dots.
-        /// Example: `players[0].uuid` 
+        /// separated by `.` dots.
+        /// Example: `players[0].uuid`
         remove: func(key: string) -> bool;
         /// Overwrite/replace the entire config with the specified config.
         ///
         /// If the config does not exist, it will be created.
         overwrite: func(config: config-tree);
         /// Whether the config has the specified `key` present.
-        /// 
+        ///
         /// The format of the `key` works just like in most programming languages.
         /// Arrays are indexed using [square brackets] and nested fields are
-        /// seperated by `.` dots.
-        /// Example: `players[0].uuid` 
+        /// separated by `.` dots.
+        /// Example: `players[0].uuid`
         has-key: func(key: string) -> bool;
 
         /// Same as `get`, but accepts a `config-path`.
