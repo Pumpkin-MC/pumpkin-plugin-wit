@@ -16,11 +16,19 @@ interface item-stack {
         value: list<u8>,
     }
 
+    /// Represents one entry in an NBT compound tag.
     record nbt-entry {
         key: string,
         value: u32,
     }
 
+    /// Represents a Minecraft NBT tag tree.
+    record nbt-tree {
+        root: u32,
+        tags: list<nbt-tag>,
+    }
+
+    /// Represents a Minecraft NBT tag.
     variant nbt-tag {
         byte(s8),
         short(s16),

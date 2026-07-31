@@ -219,6 +219,10 @@ interface java-packets {
   record s-rename-item {
     item-name: string,
   }
+  variant s-seen-advancement {
+    open-tab(string),
+    close-tab,
+  }
   record s-select-trade {
     selected-slot: s32,
   }
@@ -912,6 +916,7 @@ interface java-packets {
     s-recipe-book-change-settings(s-recipe-book-change-settings),
     s-recipe-book-seen-recipe(s-recipe-book-seen-recipe),
     s-rename-item(s-rename-item),
+    s-seen-advancement(s-seen-advancement),
     s-select-trade(s-select-trade),
     s-set-beacon(s-set-beacon),
     s-set-command-block(s-set-command-block),

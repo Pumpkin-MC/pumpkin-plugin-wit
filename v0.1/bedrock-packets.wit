@@ -347,6 +347,18 @@ interface bedrock-packets {
     client-throttle-threshold: u8,
     client-throttle-scalar: f32,
   }
+  enum c-play-status {
+    login-success,
+    outdated-client,
+    outdated-server,
+    player-spawn,
+    invalid-tenant,
+    edition-mismatch-edu-to-vanilla,
+    edition-mismatch-vanilla-to-edu,
+    server-full-sub-client,
+    editor-mismatch-editor-to-vanilla,
+    editor-mismatch-vanilla-to-editor,
+  }
   record c-player-hotbar {
     selected-slot: s32,
     container-id: u8,
@@ -572,6 +584,7 @@ interface bedrock-packets {
     c-move-player(c-move-player),
     c-network-chunk-publisher-update(c-network-chunk-publisher-update),
     c-network-settings(c-network-settings),
+    c-play-status(c-play-status),
     c-player-hotbar(c-player-hotbar),
     c-player-list(c-player-list),
     c-connected-pong(c-connected-pong),
