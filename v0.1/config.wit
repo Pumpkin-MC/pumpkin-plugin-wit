@@ -15,13 +15,13 @@ interface config {
         %string(string),
         %list(list<node-id>),
         %object(list<tuple<string, node-id>>),
-        /// `none` may be represented as either a `null` value
+        /// `null` may be represented as either a `null` value
         /// (like in JSON), or the field may be omitted entirely.
         /// If the underlying data format supports `null` values,
         /// the value will be such a `null` value, otherwise it
         /// will be entirely omitted from the config (and also
         /// omitted from nested objects and lists).
-        %option(option<node-id>),
+        null,
     }
 
     record config-tree {
