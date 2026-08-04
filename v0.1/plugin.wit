@@ -1,8 +1,8 @@
+package pumpkin:plugin@0.1.0;
+
 /// The main entry point for a Pumpkin plugin.
 /// This world defines the exports that the plugin must provide to the host
 /// and the imports that the host provides to the plugin.
-package pumpkin:plugin@0.1.0;
-
 world plugin {
     use context.{context};
     use event.{event};
@@ -10,35 +10,36 @@ world plugin {
     use command.{command-sender, consumed-args, command-error};
 
     // --- Host-provided imports ---
-
-    /// Provides logging capabilities to the plugin.
-    import logging;
-    /// Provides GUI creation and management.
-    import gui;
-    /// Provides scoreboard management.
-    import scoreboard;
-    /// Provides global server information and player lookup.
-    import server;
-    /// Provides text component building and formatting.
-    import text;
-    /// Provides command registration and argument parsing.
-    import command;
-    /// Provides the plugin execution context.
-    import context;
-    /// Provides internationalization and translation support.
-    import i18n;
-    /// Provides task scheduling for delayed or repeating logic.
-    import scheduler;
-    /// Provides world information and block manipulation.
-    import %world;
-    /// Provides entity types and manipulation.
-    import entity;
-    /// Provides boss bar creation and management.
+    import bedrock-packets;
+    import biomes;
+    import block-entity;
     import boss-bar;
-    /// Provides Bedrock custom forms.
+    import command;
+    import common;
+    import context;
+    import data-components;
+    import enchantments;
+    import entity;
+    import entity-types;
+    import event;
     import forms;
-    /// Provides Java Edition dialogs.
+    import gui;
+    import i18n;
+    import item-stack;
     import java-dialogs;
+    import java-packets;
+    import logging;
+    import particles;
+    import permission;
+    import player;
+    import recipe;
+    import scheduler;
+    import scoreboard;
+    import server;
+    import sounds;
+    import text;
+    import uuid;
+    import %world;
 
     // --- Plugin-provided exports ---
 

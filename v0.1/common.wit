@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 /// Provides common types and utilities used across the entire plugin API.
 interface common {
     /// Serialized text component as a postcard byte array.

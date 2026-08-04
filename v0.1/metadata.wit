@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 /// Plugin metadata describing the plugin and its compatibility.
 interface metadata {
     record plugin-metadata {

@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 /// Provides functionality to schedule tasks to be executed later on the server.
 interface scheduler {
     /// Schedules a task to be executed once after the specified number of ticks.

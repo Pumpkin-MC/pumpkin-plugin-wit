@@ -1,3 +1,5 @@
+package pumpkin:plugin@0.1.0;
+
 interface event {
     use common.{block-pos, game-mode, hand, position, click-type};
     use item-stack.{item-stack};
