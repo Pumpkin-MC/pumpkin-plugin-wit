@@ -1,0 +1,33 @@
+/// A simple persistent key-value store, private to each plugin.
+///
+/// Values are saved on disk in the plugin's own data folder and survive server
+/// restarts. Each plugin has its own store; plugins cannot read or write each
+/// other's data.
+///
+/// Keys and values are UTF-8 strings. Plugins that need to store structured
+/// data should serialize it first (for example to JSON).
+///
+/// The store lives in the plugin's data folder, so it is governed by the same
+/// permissions as file access: reading requires the `fs.read.data` permission
+/// and writing requires the `fs.write.data` permission. Operations return an
+/// error if the plugin has not requested the matching permission.
+interface storage {
+    /// Stores `value` under `key`, replacing any existing value.
+    set: func(key: string, value: string) -> result<_, string>;
+
+    /// Returns the value stored under `key`, or `none` if the key is not set.
+    get: func(key: string) -> result<option<string>, string>;
+
+    /// Removes `key`. Returns `true` if the key existed.
+    remove: func(key: string) -> result<bool, string>;
+
+    /// Returns `true` if `key` currently has a value.
+    contains: func(key: string) -> result<bool, string>;
+
+    /// Returns every stored key, optionally limited to the keys that begin with
+    /// `prefix`.
+    keys: func(prefix: option<string>) -> result<list<string>, string>;
+
+    /// Removes every key in this plugin's store.
+    clear: func() -> result<_, string>;
+}
