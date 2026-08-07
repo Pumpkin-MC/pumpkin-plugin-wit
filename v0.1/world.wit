@@ -104,6 +104,15 @@ interface %world {
         skip-block-added-callback,
     }
 
+    /// A block position paired with the state id to place there. Used by
+    /// set-blocks to change many blocks in one call.
+    record block-update {
+        /// The position of the block to change.
+        pos: block-pos,
+        /// The block-state id to place at that position.
+        state: u16,
+    }
+
     /// Detailed information about a block's state.
     record block-state {
         /// The internal numerical ID of the block state.
@@ -488,6 +497,31 @@ interface %world {
 
         /// Sets the block state at the specified position.
         set-block-state: func(pos: block-pos, state: u16, update-flags: block-flags);
+
+        /// Sets every block in the cuboid between `start` and `end` (inclusive)
+        /// to `state` in a single call. Returns the number of blocks that
+        /// actually changed. The region may cover at most 2097152 blocks; a
+        /// larger region returns an error.
+        fill-blocks: func(start: block-pos, end: block-pos, state: u16, update-flags: block-flags) -> result<u32, string>;
+
+        /// Reads the block-state id of every block in the cuboid between `start`
+        /// and `end` (inclusive), ordered by x, then z, then y. Useful for taking
+        /// a snapshot of a region that can be handed back to `set-region` later.
+        /// Limited to 2097152 blocks.
+        get-region: func(start: block-pos, end: block-pos) -> result<list<u16>, string>;
+
+        /// Writes a flat array of block-state ids into the cuboid between `start`
+        /// and `end` (inclusive), using the same x, then z, then y order as
+        /// `get-region`. This is the counterpart to `get-region`: pass back a
+        /// snapshot to restore a region. `states` must contain exactly one entry
+        /// per block in the region, or an error is returned. Returns the number
+        /// of blocks that actually changed. Limited to 2097152 blocks.
+        set-region: func(start: block-pos, end: block-pos, states: list<u16>, update-flags: block-flags) -> result<u32, string>;
+
+        /// Sets many blocks at once from an explicit list, in a single call.
+        /// Returns the number of blocks that actually changed. More efficient
+        /// than calling set-block-state repeatedly. Limited to 2097152 entries.
+        set-blocks: func(blocks: list<block-update>, update-flags: block-flags) -> result<u32, string>;
 
         /// Returns the current time of day in ticks.
         get-time-of-day: func() -> u64;
