@@ -290,6 +290,20 @@ interface event {
         cancelled: bool
     }
 
+    record server-list-ping-address {
+        host: string,
+        port: u16
+    }
+
+    record server-list-ping-event-data {
+        hostname: string,
+        address: server-list-ping-address,
+        motd: string,
+        max-players: u32,
+        num-players: u32,
+        favicon: option<string>
+    }
+
     enum server-load-type {
         startup,
         reload,
@@ -561,6 +575,7 @@ interface event {
         bedrock-form-response-event,
         custom-click-action-event,
         server-command-event,
+        server-list-ping-event,
         server-load-event,
         spawn-change-event,
         server-broadcast-event,
@@ -634,6 +649,7 @@ interface event {
         bedrock-form-response-event(bedrock-form-response-event-data),
         custom-click-action-event(custom-click-action-event-data),
         server-command-event(server-command-event-data),
+        server-list-ping-event(server-list-ping-event-data),
         server-load-event(server-load-event-data),
         spawn-change-event(spawn-change-event-data),
         server-broadcast-event(server-broadcast-event-data),
