@@ -9,6 +9,7 @@ world plugin {
     use server.{server as server-instance};
     use command.{command-sender, consumed-args, command-error};
     use %world.{entity};
+    use ipc.{plugin-id, ipc-message};
 
     // --- Host-provided imports ---
 
@@ -42,6 +43,8 @@ world plugin {
     import java-dialogs;
     /// Provides status effect types and instances.
     import status-effect;
+    // Provides 1 : 1 inter-plugin communication
+    import ipc;
 
     // --- Plugin-provided exports ---
 
@@ -68,6 +71,9 @@ world plugin {
 
     /// Dispatches a scheduled task execution to the plugin.
     export handle-task: func(handler-id: u32, server: server-instance);
+
+    /// Processes an incoming message from another plugin if possible, and returns (a possibly empty) response.
+    export handle-ipc-message: func(sender: plugin-id, message: ipc-message) -> result<ipc-message, string>;
 
     export handle-ai-goal-can-start: func(goal-id: u32, server: server-instance, entity: entity) -> bool;
     export handle-ai-goal-should-continue: func(goal-id: u32, server: server-instance, entity: entity) -> bool;
