@@ -54,18 +54,66 @@ interface scoreboard {
         suffix: text-component
     }
 
-    resource scoreboard {
-        add-objective: func(name: string, display-name: text-component, render-type: render-type);
-        remove-objective: func(name: string);
-        set-display-slot: func(slot: display-slot, objective-name: string);
+    /// Read-only info about an objective.
+    record objective-info {
+        name: string,
+        display-name: string,
+        criteria-name: string,
+        render-type: render-type,
+        display-auto-update: bool,
+    }
 
+    /// A single score entry for an entity/objective pair.
+    record score-info {
+        objective-name: string,
+        value: s32,
+        locked: bool,
+    }
+
+    /// Read-only info about a team.
+    record team-info {
+        name: string,
+        display-name: string,
+        players: list<string>,
+    }
+
+    resource scoreboard {
+        // Objectives
+        /// Creates a new objective with the given criterion (e.g. "dummy", "health", "trigger").
+        add-objective: func(name: string, display-name: text-component, criteria: string, render-type: render-type);
+        remove-objective: func(name: string);
+        /// Gets info about an objective by name. Returns none if not found.
+        get-objective: func(name: string) -> option<objective-info>;
+        /// Lists all registered objectives.
+        get-objectives: func() -> list<objective-info>;
+        /// Lists objectives matching a specific criterion name.
+        get-objectives-by-criteria: func(criteria: string) -> list<objective-info>;
+
+        // Display Slots
+        set-display-slot: func(slot: display-slot, objective-name: string);
+        /// Clears whatever objective is shown in the given slot.
+        clear-slot: func(slot: display-slot);
+        /// Returns the objective name displayed in the slot, or none if empty.
+        get-display-slot: func(slot: display-slot) -> option<string>;
+
+        // Scores
         update-score: func(entity-name: string, objective-name: string, value: s32);
         remove-score: func(entity-name: string, objective-name: string);
+        /// Gets all scores for a given entity/entry name.
+        get-scores: func(entry: string) -> list<score-info>;
+        /// Removes all scores for a given entity/entry name across all objectives.
+        reset-scores: func(entry: string);
+        /// Lists every tracked entity/entry name that has at least one score.
+        get-tracked-entries: func() -> list<string>;
 
+        // Teams
         create-team: func(name: string, settings: team-settings);
         remove-team: func(name: string);
         update-team: func(name: string, settings: team-settings);
-
+        get-team: func(name: string) -> option<team-info>;
+        get-teams: func() -> list<team-info>;
+        /// Returns the team name an entry belongs to, or none.
+        get-entry-team: func(entry: string) -> option<string>;
         add-player-to-team: func(team-name: string, player-name: string);
         remove-player-from-team: func(team-name: string, player-name: string);
     }
