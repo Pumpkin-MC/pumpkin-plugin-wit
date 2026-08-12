@@ -299,7 +299,7 @@ interface event {
     record server-list-ping-event-data {
         hostname: string,
         address: server-list-ping-address,
-        motd: string,
+        motd: text-component,
         max-players: u32,
         num-players: u32,
         favicon: option<string>
