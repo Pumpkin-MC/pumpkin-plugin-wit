@@ -423,6 +423,13 @@ interface event {
         cancelled: bool
     }
 
+    record food-level-change-event-data {
+        entity-id: s32,
+        food-level: s32,
+        item-name: option<string>,
+        cancelled: bool
+    }
+
     record player-item-consume-event-data {
         player: player,
         item-name: string,
@@ -592,6 +599,7 @@ interface event {
         entity-spawn-event,
         entity-combust-event,
         entity-regain-health-event,
+        food-level-change-event,
         player-item-consume-event,
         player-item-damage-event,
         player-drop-item-event,
@@ -666,6 +674,7 @@ interface event {
         entity-spawn-event(entity-spawn-event-data),
         entity-combust-event(entity-combust-event-data),
         entity-regain-health-event(entity-regain-health-event-data),
+        food-level-change-event(food-level-change-event-data),
         player-item-consume-event(player-item-consume-event-data),
         player-item-damage-event(player-item-damage-event-data),
         player-drop-item-event(player-drop-item-event-data),
