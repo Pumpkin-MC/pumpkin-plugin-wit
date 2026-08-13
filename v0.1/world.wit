@@ -459,6 +459,16 @@ interface %world {
         max: position,
     }
 
+    /// Represents the configured shared spawn location for a world.
+    record world-spawn-location {
+        /// The block position of the shared world spawn.
+        pos: block-pos,
+        /// The yaw players should face when spawning here.
+        yaw: f32,
+        /// The pitch players should use when spawning here.
+        pitch: f32,
+    }
+
     /// Represents a cardinal direction or block face.
     enum block-direction {
         down,
@@ -500,6 +510,9 @@ interface %world {
 
         /// Returns the dimension type (e.g., \"minecraft:overworld\").
         get-dimension: func() -> string;
+
+        /// Returns the configured shared spawn location for this world.
+        get-spawn-location: func() -> world-spawn-location;
 
         /// Gets the highest non-air block Y coordinate at the specified X and Z.
         get-top-block-y: func(x: s32, z: s32) -> s32;
