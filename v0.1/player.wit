@@ -577,7 +577,7 @@ interface player {
         /// Grants or denies a specific permission node for the player.
         set-permission: func(node: string, value: bool);
         /// Removes an explicitly set permission node from the player.
-		unset-permission: func(node: string);
+        unset-permission: func(node: string);
         /// Removes all explicitly set permission nodes from the player.
         clear-permissions: func();
         /// Returns `Some(true)` if granted, `Some(false)` if denied, or `None` if not set.
