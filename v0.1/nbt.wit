@@ -1,0 +1,35 @@
+/// Shared NBT (Named Binary Tag) types used across the plugin API.
+///
+/// Because the component model does not support recursive types, an NBT tree is
+/// represented in a flattened form: `nbt-tree` holds a flat list of tags and a
+/// `root` index into it, and compound and list tags refer to their children by
+/// index rather than by nesting.
+interface nbt {
+    /// Represents one entry in an NBT compound tag.
+    record nbt-entry {
+        key: string,
+        value: u32,
+    }
+
+    /// Represents a Minecraft NBT tag tree.
+    record nbt-tree {
+        root: u32,
+        tags: list<nbt-tag>,
+    }
+
+    /// Represents a Minecraft NBT tag.
+    variant nbt-tag {
+        byte(s8),
+        short(s16),
+        int(s32),
+        long(s64),
+        float(f32),
+        double(f64),
+        byte-array(list<s8>),
+        string-tag(string),
+        list-tag(list<u32>),
+        compound(list<nbt-entry>),
+        int-array(list<s32>),
+        long-array(list<s64>),
+    }
+}

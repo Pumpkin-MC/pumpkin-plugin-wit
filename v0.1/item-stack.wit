@@ -2,6 +2,7 @@ interface item-stack {
     use data-components.{data-component};
     use enchantments.{enchantment};
     use text.{text-component};
+    use nbt.{nbt-tree};
 
     /// Represents an enchantment and its level.
     record enchantment-value {
@@ -14,34 +15,6 @@ interface item-stack {
         component: data-component,
         /// The serialized value of the component.
         value: list<u8>,
-    }
-
-    /// Represents one entry in an NBT compound tag.
-    record nbt-entry {
-        key: string,
-        value: u32,
-    }
-
-    /// Represents a Minecraft NBT tag tree.
-    record nbt-tree {
-        root: u32,
-        tags: list<nbt-tag>,
-    }
-
-    /// Represents a Minecraft NBT tag.
-    variant nbt-tag {
-        byte(s8),
-        short(s16),
-        int(s32),
-        long(s64),
-        float(f32),
-        double(f64),
-        byte-array(list<s8>),
-        string-tag(string),
-        list-tag(list<u32>),
-        compound(list<nbt-entry>),
-        int-array(list<s32>),
-        long-array(list<s64>),
     }
 
     resource item-stack {
