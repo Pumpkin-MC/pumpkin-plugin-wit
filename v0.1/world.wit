@@ -7,6 +7,7 @@ interface %world {
     use sounds.{sound};
     use entity-types.{entity-type};
     use biomes.{biome};
+    use status-effect.{status-effect-type, status-effect-instance};
 
     use uuid.{uuid};
 
@@ -313,6 +314,21 @@ interface %world {
 
         /// Performs a raycast from the entity's eye position in its looking direction.
         raycast: func(max-distance: f64, fluid-handling: bool) -> option<raycast-result>;
+
+        /// Gives a status effect to this entity. Does nothing if the entity
+        /// cannot hold effects (for example a dropped item or a projectile).
+        add-effect: func(effect: status-effect-instance);
+        /// Removes a status effect from this entity. Does nothing if the entity
+        /// does not have the effect or cannot hold effects.
+        remove-effect: func(effect: status-effect-type);
+        /// Removes all status effects from this entity.
+        clear-effects: func();
+        /// Checks whether a status effect is currently applied to this entity.
+        has-effect: func(effect: status-effect-type) -> bool;
+        /// Returns the instance of a status effect applied to this entity, if any.
+        get-effect: func(effect: status-effect-type) -> option<status-effect-instance>;
+        /// Returns all status effects currently applied to this entity.
+        get-active-effects: func() -> list<status-effect-instance>;
     }
 
     /// Result of a raycast operation.
