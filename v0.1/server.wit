@@ -45,6 +45,11 @@ interface server {
         /// Fields are returned only if the plugin has the corresponding permissions.
         get-sys-info: func() -> sys-info;
 
+        /// Returns the resident set size of the Pumpkin server process, in bytes.
+        /// Requires `sys.info` or `sys.info.ram`. Kept separate from `sys-info` so
+        /// existing v0.1 plugins keep a stable record layout.
+        get-process-memory: func() -> option<u64>;
+
         /// Returns the current difficulty level of the server.
         get-difficulty: func() -> difficulty;
 
