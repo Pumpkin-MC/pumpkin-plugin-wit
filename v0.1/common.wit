@@ -1,9 +1,5 @@
 /// Provides common types and utilities used across the entire plugin API.
 interface common {
-    /// Serialized text component as a postcard byte array.
-    /// @deprecated Use the text-component resource from the text interface instead.
-    type raw-text-component = list<u8>;
-
     /// A position in the world grid (integers).
     record block-pos {
         x: s32,
@@ -12,7 +8,11 @@ interface common {
     }
 
     /// A precise coordinate in the world (floats).
-    type position = tuple<f64, f64, f64>;
+    record position {
+        x: f64,
+        y: f64,
+        z: f64,
+    }
 
     /// Represents the hands of a player.
     enum hand {
