@@ -19,6 +19,10 @@ interface bedrock-packets {
     add-block-nbt: bool,
     hotbar-slot: u8,
   }
+  record s-client-cache-blob-status {
+    miss-hashes: list<s64>,
+    hit-hashes: list<s64>,
+  }
   record s-client-cache-status {
     cache-supported: bool,
   }
@@ -38,8 +42,8 @@ interface bedrock-packets {
   }
   record s-emote {
     runtime-entity-id: s64,
-    emote-id: string,
     emote-length: s32,
+    emote-id: string,
     xuid: string,
     platform-id: string,
     %flags: u8,
@@ -75,8 +79,7 @@ interface bedrock-packets {
   }
   record s-mob-equipment {
     entity-runtime-id: s64,
-    stack-id: s32,
-    item: option<string>,
+    item: string,
     inventory-slot: u8,
     hotbar-slot: u8,
     window-id: u8,
@@ -84,9 +87,16 @@ interface bedrock-packets {
   record s-modal-form-response {
     form-id: s32,
     form-data: option<string>,
+    cancel-reason: option<u8>,
+  }
+  record s-packet-violation-warning {
+    violation-type: s32,
+    severity: s32,
+    packet-id: s32,
+    context: string,
   }
   record s-player-action {
-    runtime-id: s32,
+    runtime-id: s64,
     action: string,
     block-pos: tuple<s32, s32, s32>,
     result-pos: tuple<s32, s32, s32>,
@@ -107,41 +117,18 @@ interface bedrock-packets {
     tick: s64,
     delta: tuple<f64, f64, f64>,
     block-actions: option<list<string>>,
+    item-interaction: option<string>,
+    item-stack-request: option<string>,
     vehicle-rotation: option<string>,
     vehicle-unique-id: option<s64>,
     analog-move: string,
     camera-orientation: tuple<f64, f64, f64>,
     raw-move: string,
   }
-  record s-connected-ping {
-    time: s64,
-  }
-  record s-connection-request {
-    client-guid: s64,
-    time: s64,
-    security: bool,
-  }
-  record s-new-incoming-connection {
-    server-address: string,
-    internal-address: string,
-    ping-time: s64,
-    pong-time: s64,
-  }
-  record s-open-connection-request1 {
-    magic: string,
-    protocol-version: u8,
-    mtu: s32,
-  }
-  record s-open-connection-request2 {
-    magic: string,
-    server-address: string,
-    mtu: s32,
-    client-guid: s64,
-  }
-  record s-unconnected-ping {
-    time: s64,
-    magic: string,
-    client-guid: s64,
+  record s-player-hotbar {
+    selected-slot: s32,
+    container-id: u8,
+    select-slot: bool,
   }
   record s-request-ability {
     ability: s32,
@@ -157,16 +144,22 @@ interface bedrock-packets {
   record s-resource-pack-response {
     response: u8,
     download-size: s32,
+    pack-ids: list<string>,
+  }
+  record s-respawn {
+    position: tuple<f64, f64, f64>,
+    state: string,
+    player-runtime-id: s64,
   }
   record s-set-local-player-as-initialized {
     runtime-entity-id: s64,
   }
   record s-set-player-inventory-options {
-    left-inventory-tab: u8,
-    right-inventory-tab: u8,
+    left-inventory-tab: s32,
+    right-inventory-tab: s32,
     filtering: bool,
-    inventory-layout: u8,
-    crafting-layout: u8,
+    inventory-layout: s32,
+    crafting-layout: s32,
   }
   record s-text {
     needs-translation: bool,
@@ -219,7 +212,7 @@ interface bedrock-packets {
     ability-data: string,
     links: list<string>,
     device-id: string,
-    build-platform: s32,
+    build-platform: string,
   }
   record c-available-commands {
     enum-values: list<string>,
@@ -231,12 +224,30 @@ interface bedrock-packets {
     soft-enums: list<string>,
     constraints: list<string>,
   }
+  record c-block-actor-data {
+    position: tuple<s32, s32, s32>,
+    data: string,
+  }
+  record c-block-event {
+    position: tuple<s32, s32, s32>,
+    event-type: s32,
+    event-data: s32,
+  }
   record c-boss-event {
     boss-entity-id: s64,
     action: string,
   }
+  record c-change-dimension {
+    dimension: s32,
+    position: tuple<f64, f64, f64>,
+    respawn: bool,
+    loading-screen-id: option<s32>,
+  }
   record c-chunk-radius-update {
     chunk-radius: s32,
+  }
+  record c-client-cache-miss-response {
+    blobs: list<string>,
   }
   record c-container-open {
     container-id: u8,
@@ -248,6 +259,8 @@ interface bedrock-packets {
     prediction-type: u8,
     pos: tuple<f64, f64, f64>,
     pos-delta: tuple<f64, f64, f64>,
+    rotation: string,
+    vehicle-angular-velocity: option<f32>,
     on-ground: bool,
     tick: s64,
   }
@@ -267,9 +280,6 @@ interface bedrock-packets {
   }
   record c-gamerules-changed {
     rule-data: string,
-  }
-  record c-handshake {
-    jwt-data: string,
   }
   record c-inventory-content {
     container-id: s32,
@@ -294,11 +304,39 @@ interface bedrock-packets {
     dimension: s32,
     cache-enabled: bool,
     chunk: string,
+    block-actors: list<string>,
   }
   record c-level-event {
     event-id: s32,
     position: tuple<f64, f64, f64>,
     data: s32,
+  }
+  record c-level-sound-event {
+    sound-id: string,
+    position: tuple<f64, f64, f64>,
+    extra-data: s32,
+    entity-type: string,
+    is-baby-mob: bool,
+    is-global: bool,
+    actor-unique-id: s64,
+    fire-at-position: option<tuple<f64, f64, f64>>,
+  }
+  record c-mob-effect {
+    runtime-entity-id: s64,
+    event-id: u8,
+    effect-id: s32,
+    amplifier: s32,
+    particles: bool,
+    duration: s32,
+    tick: s64,
+    ambient: bool,
+  }
+  record c-mob-equipment {
+    entity-runtime-id: s64,
+    item: string,
+    inventory-slot: u8,
+    hotbar-slot: u8,
+    window-id: u8,
   }
   record c-modal-form-request {
     form-id: s32,
@@ -347,6 +385,18 @@ interface bedrock-packets {
     client-throttle-threshold: u8,
     client-throttle-scalar: f32,
   }
+  enum c-play-status {
+    login-success,
+    outdated-client,
+    outdated-server,
+    player-spawn,
+    invalid-tenant,
+    edition-mismatch-edu-to-vanilla,
+    edition-mismatch-vanilla-to-edu,
+    server-full-sub-client,
+    editor-mismatch-editor-to-vanilla,
+    editor-mismatch-vanilla-to-editor,
+  }
   record c-player-hotbar {
     selected-slot: s32,
     container-id: u8,
@@ -355,41 +405,6 @@ interface bedrock-packets {
   record c-player-list {
     action: u8,
     entries: list<string>,
-  }
-  record c-connected-pong {
-    ping: s64,
-    pong: s64,
-  }
-  record c-connection-request-accepted {
-    client-address: string,
-    system-index: s32,
-    system-addresses: string,
-    requested-timestamp: s64,
-    timestamp: s64,
-  }
-  record c-incompatible-protocol-version {
-    protocol-version: u8,
-    magic: string,
-    server-guid: s64,
-  }
-  record c-open-connection-reply1 {
-    magic: string,
-    server-guid: s64,
-    has-server-security: bool,
-    mtu: s32,
-  }
-  record c-open-connection-reply2 {
-    magic: string,
-    server-guid: s64,
-    client-address: string,
-    mtu: s32,
-    security: bool,
-  }
-  record c-unconnected-pong {
-    time: s64,
-    server-guid: s64,
-    magic: string,
-    server-id: string,
   }
   record c-remove-actor {
     entity-unique-id: s64,
@@ -409,6 +424,11 @@ interface bedrock-packets {
     world-template-id: uuid,
     world-template-version: string,
     resource-packs: list<string>,
+  }
+  record c-respawn {
+    position: tuple<f64, f64, f64>,
+    state: string,
+    player-runtime-id: s64,
   }
   record c-set-display-objective {
     display-slot: string,
@@ -430,16 +450,28 @@ interface bedrock-packets {
     synced-properties: string,
     tick: s64,
   }
+  record c-set-actor-link {
+    link: string,
+  }
   record c-set-actor-motion {
     target-runtime-id: s64,
     motion: tuple<f64, f64, f64>,
     tick: s64,
+  }
+  record c-set-difficulty {
+    difficulty: s32,
   }
   record c-set-health {
     health: s32,
   }
   record c-set-player-gamemode {
     gamemode: string,
+  }
+  record c-set-spawn-position {
+    spawn-type: s32,
+    position: tuple<s32, s32, s32>,
+    dimension: s32,
+    spawn-position: tuple<s32, s32, s32>,
   }
   record c-set-time {
     time: s32,
@@ -453,6 +485,10 @@ interface bedrock-packets {
     xuid: string,
     platform-online-id: string,
     filtered-message: string,
+  }
+  record c-show-credits {
+    player-runtime-id: s64,
+    status: s32,
   }
   record c-start-game {
     entity-id: s64,
@@ -482,7 +518,6 @@ interface bedrock-packets {
     enable-clientside-generation: bool,
     blocknetwork-ids-are-hashed: bool,
     server-auth-sounds: bool,
-    is-logging-chat: bool,
     server-join-information: option<string>,
     telemetry: string,
   }
@@ -516,6 +551,7 @@ interface bedrock-packets {
     s-actor-event(s-actor-event),
     s-animate(s-animate),
     s-block-pick-request(s-block-pick-request),
+    s-client-cache-blob-status(s-client-cache-blob-status),
     s-client-cache-status(s-client-cache-status),
     s-command-request(s-command-request),
     s-container-close(s-container-close),
@@ -528,19 +564,15 @@ interface bedrock-packets {
     s-login(s-login),
     s-mob-equipment(s-mob-equipment),
     s-modal-form-response(s-modal-form-response),
+    s-packet-violation-warning(s-packet-violation-warning),
     s-player-action(s-player-action),
     s-player-auth-input(s-player-auth-input),
-    s-connected-ping(s-connected-ping),
-    s-connection-request(s-connection-request),
-    s-new-incoming-connection(s-new-incoming-connection),
-    s-disconnect,
-    s-open-connection-request1(s-open-connection-request1),
-    s-open-connection-request2(s-open-connection-request2),
-    s-unconnected-ping(s-unconnected-ping),
+    s-player-hotbar(s-player-hotbar),
     s-request-ability(s-request-ability),
     s-request-chunk-radius(s-request-chunk-radius),
     s-request-network-settings(s-request-network-settings),
     s-resource-pack-response(s-resource-pack-response),
+    s-respawn(s-respawn),
     s-set-local-player-as-initialized(s-set-local-player-as-initialized),
     s-set-player-inventory-options(s-set-player-inventory-options),
     s-text(s-text),
@@ -551,47 +583,54 @@ interface bedrock-packets {
     c-add-item-actor(c-add-item-actor),
     c-add-player(c-add-player),
     c-available-commands(c-available-commands),
+    c-biome-definition-list,
+    c-block-actor-data(c-block-actor-data),
+    c-block-event(c-block-event),
     c-boss-event(c-boss-event),
+    c-change-dimension(c-change-dimension),
     c-chunk-radius-update(c-chunk-radius-update),
+    c-client-cache-miss-response(c-client-cache-miss-response),
     c-container-open(c-container-open),
     c-correct-player-move(c-correct-player-move),
     c-crafting-data(c-crafting-data),
     c-creative-content(c-creative-content),
     c-disconnect-player(c-disconnect-player),
     c-gamerules-changed(c-gamerules-changed),
-    c-handshake(c-handshake),
     c-inventory-content(c-inventory-content),
     c-inventory-slot(c-inventory-slot),
     c-item-registry(c-item-registry),
     c-item-stack-response(c-item-stack-response),
     c-level-chunk(c-level-chunk),
     c-level-event(c-level-event),
+    c-level-sound-event(c-level-sound-event),
+    c-mob-effect(c-mob-effect),
+    c-mob-equipment(c-mob-equipment),
     c-modal-form-request(c-modal-form-request),
     c-move-actor-absolute(c-move-actor-absolute),
     c-move-actor-delta(c-move-actor-delta),
     c-move-player(c-move-player),
     c-network-chunk-publisher-update(c-network-chunk-publisher-update),
     c-network-settings(c-network-settings),
+    c-play-status(c-play-status),
     c-player-hotbar(c-player-hotbar),
     c-player-list(c-player-list),
-    c-connected-pong(c-connected-pong),
-    c-connection-request-accepted(c-connection-request-accepted),
-    c-incompatible-protocol-version(c-incompatible-protocol-version),
-    c-open-connection-reply1(c-open-connection-reply1),
-    c-open-connection-reply2(c-open-connection-reply2),
-    c-unconnected-pong(c-unconnected-pong),
     c-remove-actor(c-remove-actor),
     c-resource-pack-stack-packet(c-resource-pack-stack-packet),
     c-resource-packs-info(c-resource-packs-info),
+    c-respawn(c-respawn),
     c-set-display-objective(c-set-display-objective),
     c-set-score(c-set-score),
     c-remove-objective(c-remove-objective),
     c-set-actor-data(c-set-actor-data),
+    c-set-actor-link(c-set-actor-link),
     c-set-actor-motion(c-set-actor-motion),
+    c-set-difficulty(c-set-difficulty),
     c-set-health(c-set-health),
     c-set-player-gamemode(c-set-player-gamemode),
+    c-set-spawn-position(c-set-spawn-position),
     c-set-time(c-set-time),
     c-set-title(c-set-title),
+    c-show-credits(c-show-credits),
     c-start-game(c-start-game),
     c-take-item-actor(c-take-item-actor),
     c-transfer(c-transfer),

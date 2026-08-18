@@ -56,11 +56,15 @@ interface scoreboard {
 
     resource scoreboard {
         add-objective: func(name: string, display-name: text-component, render-type: render-type);
+        update-objective: func(name: string, display-name: text-component, render-type: render-type);
         remove-objective: func(name: string);
         set-display-slot: func(slot: display-slot, objective-name: string);
+        clear-display-slot: func(slot: display-slot);
 
         update-score: func(entity-name: string, objective-name: string, value: s32);
+        add-score: func(entity-name: string, objective-name: string, delta: s32) -> s32;
         remove-score: func(entity-name: string, objective-name: string);
+        reset-entity-scores: func(entity-name: string);
 
         create-team: func(name: string, settings: team-settings);
         remove-team: func(name: string);
@@ -68,5 +72,35 @@ interface scoreboard {
 
         add-player-to-team: func(team-name: string, player-name: string);
         remove-player-from-team: func(team-name: string, player-name: string);
+        clear-team-players: func(team-name: string);
+
+        get-teams: func() -> list<string>;
+        get-team: func(name: string) -> option<team-settings>;
+        get-team-players: func(team-name: string) -> list<string>;
+        get-player-team: func(player-name: string) -> option<string>;
+    }
+
+    enum bedrock-sort-order {
+        ascending,
+        descending
+    }
+
+    enum bedrock-display-slot {
+        player-list,
+        sidebar,
+        below-name
+    }
+
+    resource bedrock-scoreboard {
+        add-objective: func(name: string, display-name: string, sort-order: bedrock-sort-order);
+        update-objective: func(name: string, display-name: string, sort-order: bedrock-sort-order);
+        remove-objective: func(name: string);
+        set-display-slot: func(slot: bedrock-display-slot, objective-name: string);
+        clear-display-slot: func(slot: bedrock-display-slot);
+
+        update-score: func(entity-name: string, objective-name: string, value: s32);
+        add-score: func(entity-name: string, objective-name: string, delta: s32) -> s32;
+        remove-score: func(entity-name: string, objective-name: string);
+        reset-entity-scores: func(entity-name: string);
     }
 }

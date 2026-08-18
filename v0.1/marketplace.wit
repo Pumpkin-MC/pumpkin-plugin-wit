@@ -1,0 +1,5 @@
+/// Interface for querying marketplace details and public keys from the host.
+interface marketplace {
+    /// Returns the active Pumpkin Marketplace Ed25519 public key in hex format (if available/cached).
+    get-public-key: func() -> option<string>;
+}

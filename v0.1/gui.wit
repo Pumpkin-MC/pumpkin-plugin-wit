@@ -2,42 +2,15 @@ interface gui {
     use text.{text-component};
     use common.{click-type};
     use item-stack.{item-stack};
-
-    enum gui-type {
-        generic-9x1,
-        generic-9x2,
-        generic-9x3,
-        generic-9x4,
-        generic-9x5,
-        generic-9x6,
-        generic-3x3,
-        crafter-3x3,
-        anvil,
-        beacon,
-        blast-furnace,
-        brewing-stand,
-        crafting,
-        enchantment,
-        furnace,
-        grindstone,
-        hopper,
-        lectern,
-        loom,
-        merchant,
-        shulker-box,
-        smithing,
-        smoker,
-        cartography-table,
-        stonecutter,
-    }
+    use screens.{screen};
 
     resource gui {
-        constructor(%type: gui-type, title: text-component);
+        constructor(%type: screen, title: text-component);
         set-item: func(slot: u32, item: item-stack);
         get-item: func(slot: u32) -> option<item-stack>;
         
         /// Returns the type of this GUI.
-        get-type: func() -> gui-type;
+        get-type: func() -> screen;
         
         /// Returns the title of this GUI.
         get-title: func() -> text-component;

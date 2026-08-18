@@ -4,6 +4,34 @@ interface common {
     /// @deprecated Use the text-component resource from the text interface instead.
     type raw-text-component = list<u8>;
 
+    /// Represents one entry in an NBT compound tag.
+    record nbt-entry {
+        key: string,
+        value: u32,
+    }
+
+    /// Represents a Minecraft NBT tag tree.
+    record nbt-tree {
+        root: u32,
+        tags: list<nbt-tag>,
+    }
+
+    /// Represents a Minecraft NBT tag.
+    variant nbt-tag {
+        byte(s8),
+        short(s16),
+        int(s32),
+        long(s64),
+        float(f32),
+        double(f64),
+        byte-array(list<s8>),
+        string-tag(string),
+        list-tag(list<u32>),
+        compound(list<nbt-entry>),
+        int-array(list<s32>),
+        long-array(list<s64>),
+    }
+
     /// A position in the world grid (integers).
     record block-pos {
         x: s32,

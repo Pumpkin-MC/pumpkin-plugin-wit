@@ -11,6 +11,30 @@ interface player {
     use java-packets.{clientbound-packet as java-packet};
     use bedrock-packets.{clientbound-packet as bedrock-packet};
     use uuid.{uuid};
+    use status-effect.{status-effect-type, status-effect-instance};
+    use scoreboard.{scoreboard, bedrock-scoreboard};
+    use advancement.{advancement-progress};
+    use damage-types.{damage-type};
+    use statistics.{statistic-category, custom-statistic};
+
+    /// Represents per-player weather condition overrides.
+    enum player-weather {
+        clear,
+        downfall,
+    }
+
+    /// Types of projectiles that can be launched by a player.
+    enum projectile-type {
+        arrow,
+        snowball,
+        egg,
+        ender-pearl,
+        splash-potion,
+        fireball,
+        small-fireball,
+        trident,
+        wind-charge,
+    }
 
     /// Various abilities a player can have.
     record player-abilities {
@@ -540,6 +564,226 @@ interface player {
         is-trusted-skin: bool,
     }
 
+    /// Protocol-level disconnect reasons for Minecraft Bedrock Edition.
+    enum bedrock-disconnect-reason {
+        unknown,
+        cant-connect-no-internet,
+        no-permissions,
+        unrecoverable-error,
+        third-party-blocked,
+        third-party-no-internet,
+        third-party-bad-ip,
+        third-party-no-server-or-server-locked,
+        version-mismatch,
+        skin-issue,
+        invite-session-not-found,
+        edu-level-settings-missing,
+        local-server-not-found,
+        legacy-disconnect,
+        user-leave-game-attempted,
+        platform-locked-skins-error,
+        realms-world-unassigned,
+        realms-server-cant-connect,
+        realms-server-hidden,
+        realms-server-disabled-beta,
+        realms-server-disabled,
+        cross-platform-disabled,
+        cant-connect,
+        session-not-found,
+        client-settings-incompatible-with-server,
+        server-full,
+        invalid-platform-skin,
+        edition-version-mismatch,
+        edition-mismatch,
+        level-newer-than-exe-version,
+        no-fail-occurred,
+        banned-skin,
+        timeout,
+        server-not-found,
+        outdated-server,
+        outdated-client,
+        no-premium-platform,
+        multiplayer-disabled,
+        no-wifi,
+        world-corruption,
+        no-reason,
+        disconnected,
+        invalid-player,
+        logged-in-other-location,
+        server-id-conflict,
+        not-allowed,
+        not-authenticated,
+        invalid-tenant,
+        unknown-packet,
+        unexpected-packet,
+        invalid-command-request-packet,
+        host-suspended,
+        login-packet-no-request,
+        login-packet-no-cert,
+        missing-client,
+        kicked,
+        kicked-for-exploit,
+        kicked-for-idle,
+        resource-pack-problem,
+        incompatible-pack,
+        out-of-storage,
+        invalid-level,
+        disconnect-packet,
+        block-mismatch,
+        invalid-heights,
+        invalid-widths,
+        connection-lost,
+        zombie-connection,
+        shutdown,
+        reason-not-set,
+        loading-state-timeout,
+        resource-pack-loading-failed,
+        searching-for-session-loading-screen-failed,
+        nether-net-protocol-version,
+        subsystem-status-error,
+        empty-auth-from-discovery,
+        empty-url-from-discovery,
+        expired-auth-from-discovery,
+        unknown-signal-service-sign-in-failure,
+        xbl-join-lobby-failure,
+        unspecified-client-instance-disconnection,
+        nether-net-session-not-found,
+        nether-net-create-peer-connection,
+        nether-net-ice,
+        nether-net-connect-request,
+        nether-net-connect-response,
+        nether-net-negotiation-timeout,
+        nether-net-inactivity-timeout,
+        stale-connection-being-replaced,
+        realms-session-not-found,
+        bad-packet,
+        nether-net-failed-to-create-offer,
+        nether-net-failed-to-create-answer,
+        nether-net-failed-to-set-local-description,
+        nether-net-failed-to-set-remote-description,
+        nether-net-negotiation-timeout-waiting-for-response,
+        nether-net-negotiation-timeout-waiting-for-accept,
+        nether-net-incoming-connection-ignored,
+        nether-net-signaling-parsing-failure,
+        nether-net-signaling-unknown-error,
+        nether-net-signaling-unicast-delivery-failed,
+        nether-net-signaling-broadcast-delivery-failed,
+        nether-net-signaling-generic-delivery-failed,
+        editor-mismatch-editor-world,
+        editor-mismatch-vanilla-world,
+        world-transfer-not-primary-client,
+        request-server-shutdown,
+        client-game-setup-cancelled,
+        client-game-setup-failed,
+        no-venue,
+        nether-net-signaling-signin-failed,
+        session-access-denied,
+        service-signin-issue,
+        nether-net-no-signaling-channel,
+        nether-net-not-logged-in,
+        nether-net-client-signaling-error,
+        sub-client-login-disabled,
+        deep-link-trying-to-open-demo-world-while-signed-in,
+        async-join-task-denied,
+        realms-timeline-required,
+        guest-without-host,
+        failed-to-join-experience,
+        nether-net-data-channel-closed,
+        discovery-environment-mismatch,
+        host-without-keys,
+        host-signed-out,
+        script-watchdog-exception,
+        script-memory-limit-exceeded,
+        storage-low-during-gameplay,
+        storage-full-during-gameplay,
+        level-storage-corruption,
+        edition-mismatch-vanilla-to-edu,
+        edition-mismatch-edu-to-vanilla,
+        editor-mismatch-editor-to-vanilla,
+        editor-mismatch-vanilla-to-editor,
+        deny-listed,
+        nonce-missing,
+        nonce-not-found,
+        nonce-expired,
+        nonce-not-valid,
+        host-disconnected,
+        editor-join-intent-policy-failure,
+        nether-net-identity-not-allowed,
+        invalid-name,
+        expired-token,
+        host-accepts-no-type-of-auth,
+        not-authenticated-fast-fail,
+        editor-not-allowed,
+    }
+
+    /// Policy for tearing down the player's network connection.
+    enum socket-teardown-policy {
+        /// Send the disconnect packet and gracefully close the connection.
+        graceful,
+        /// Send the disconnect packet and close the socket immediately.
+        immediate-close,
+        /// Terminate the connection immediately without sending any disconnect packet.
+        drop-connection,
+    }
+
+    /// Options for disconnecting a Java Edition player.
+    record java-kick-options {
+        /// The formatted text component displayed on the Java disconnect screen.
+        reason: text-component,
+        /// Whether to log the kick in the server console (default: true).
+        log-to-console: bool,
+        /// How the connection is closed (default: graceful).
+        teardown-policy: socket-teardown-policy,
+    }
+
+    /// Options for disconnecting a Bedrock Edition player.
+    record bedrock-kick-options {
+        /// Protocol level disconnect code (default: kicked).
+        reason: bedrock-disconnect-reason,
+        /// Message displayed on the Bedrock disconnect screen (default: "").
+        message: string,
+        /// Whether to suppress the disconnect message on the client screen (default: false).
+        skip-message: bool,
+        /// Filtered message string for safety/parental filters (default: "").
+        filtered-message: string,
+        /// Whether to log the kick in the server console (default: true).
+        log-to-console: bool,
+        /// How the connection is closed (default: graceful).
+        teardown-policy: socket-teardown-policy,
+    }
+
+    /// Options for banning a player.
+    record ban-player-options {
+        /// Ban reason displayed to the player and stored in the ban list.
+        reason: option<text-component>,
+        /// Source or authority responsible for the ban (default: "Plugin").
+        source: option<string>,
+        /// Ban expiration in RFC-3339 format, if temporary.
+        expires-at-utc: option<string>,
+        /// Ban duration in seconds from now, if temporary.
+        duration-seconds: option<u64>,
+        /// Whether to immediately kick the player if currently online (default: true).
+        kick-if-online: bool,
+        /// Whether to log the ban action to the server console (default: true).
+        log-to-console: bool,
+    }
+
+    /// Options for banning an IP address.
+    record ban-ip-options {
+        /// Ban reason stored in the IP ban list.
+        reason: option<text-component>,
+        /// Source or authority responsible for the ban (default: "Plugin").
+        source: option<string>,
+        /// Ban expiration in RFC-3339 format, if temporary.
+        expires-at-utc: option<string>,
+        /// Ban duration in seconds from now, if temporary.
+        duration-seconds: option<u64>,
+        /// Whether to immediately kick all online players with this IP (default: true).
+        kick-matching-players: bool,
+        /// Whether to log the IP ban action to the server console (default: true).
+        log-to-console: bool,
+    }
+
     /// A handle to a player on the server.
     resource player {
         /// Returns the player as an entity.
@@ -621,21 +865,85 @@ interface player {
         teleport: func (position: position, yaw: option<f32>, pitch: option<f32>, %world: %world);
         /// Teleports the player to another world at a specific position.
         teleport-world: func (world-ref: %world, position: position, yaw: option<f32>, pitch: option<f32>);
-        /// Kicks the player from the server with the specified reason.
-        kick: func (message: text-component);
         /// Forces the player to respawn.
         respawn: func ();
 
         /// Opens a GUI for the player.
         open-gui: func (gui-ref: gui);
 
-        /// Bans the player with an optional reason.
-        ban: func (reason: option<text-component>);
-        /// Bans the player's IP address with an optional reason.
-        ban-ip: func (reason: option<text-component>);
+        /// Bans the player with the specified options.
+        ban: func (options: ban-player-options);
+        /// Bans the player's IP address with the specified options.
+        ban-ip: func (options: ban-ip-options);
 
         /// Transfers the player to another server.
         transfer: func (host: string, port: u16);
+
+        // Status Effects
+
+        /// Gives a status effect to the player.
+        add-effect: func(effect: status-effect-instance);
+        /// Removes a status effect from the player.
+        remove-effect: func(effect: status-effect-type);
+        /// Clears all active status effects from the player.
+        clear-effects: func();
+        /// Checks if a status effect is currently applied to the player.
+        has-effect: func(effect: status-effect-type) -> bool;
+        /// Returns the status effect instance applied to the player, if any.
+        get-effect: func(effect: status-effect-type) -> option<status-effect-instance>;
+        /// Returns all status effects currently applied to the player.
+        get-active-effects: func() -> list<status-effect-instance>;
+
+        // Health & Damage
+
+        /// Heals the player by a specified amount.
+        heal: func(amount: f32);
+        /// Deals damage to the player by a specified amount with a damage type.
+        damage: func(amount: f32, damage-type: damage-type);
+        /// Kills the player instantly.
+        kill: func();
+
+        // Statistics
+
+        /// Gets the value of a statistic for this player in the given category and ID.
+        get-statistic: func(category: statistic-category, stat-id: s32) -> s32;
+        /// Sets the value of a statistic for this player in the given category and ID.
+        set-statistic: func(category: statistic-category, stat-id: s32, value: s32);
+        /// Increments the value of a statistic for this player in the given category and ID.
+        increment-statistic: func(category: statistic-category, stat-id: s32, amount: s32);
+
+        /// Gets the value of a custom statistic for this player.
+        get-custom-statistic: func(stat: custom-statistic) -> s32;
+        /// Sets the value of a custom statistic for this player.
+        set-custom-statistic: func(stat: custom-statistic, value: s32);
+        /// Increments the value of a custom statistic for this player.
+        increment-custom-statistic: func(stat: custom-statistic, amount: s32);
+
+        /// Sends the player's updated statistics packet to the client.
+        send-stats: func();
+
+        /// Gets the team name that this player belongs to on their active scoreboard, if any.
+        get-team: func() -> option<string>;
+
+        // Cooldowns
+
+        /// Starts an item cooldown for a specific item group name.
+        start-cooldown: func(group: string, duration-ticks: s32);
+        /// Returns the cooldown progress (0.0 to 1.0) for a specific item group.
+        get-cooldown: func(group: string) -> f32;
+        /// Checks if a specific item group is currently on cooldown.
+        is-on-cooldown: func(group: string) -> bool;
+
+        // Abilities & Flight
+
+        /// Sets whether the player is allowed to fly.
+        set-allow-flight: func(allowed: bool);
+        /// Sets the player's flying speed.
+        set-fly-speed: func(speed: f32);
+        /// Sets the player's walking speed.
+        set-walk-speed: func(speed: f32);
+        /// Sets whether the player is invulnerable to damage.
+        set-invulnerable: func(invulnerable: bool);
 
         // Inventory
 
@@ -650,6 +958,17 @@ interface player {
         set-item-in-hand: func (hand: hand, stack: option<item-stack>);
         /// Sets the item in the specified inventory slot.
         set-inventory-item: func (slot: u8, stack: option<item-stack>);
+
+        // Ender Chest Inventory
+
+        /// Returns the item in the specified ender chest slot (0-26).
+        get-ender-chest-item: func (slot: u8) -> option<item-stack>;
+        /// Sets the item in the specified ender chest slot (0-26).
+        set-ender-chest-item: func (slot: u8, stack: option<item-stack>);
+        /// Clears all items from the player's ender chest.
+        clear-ender-chest: func ();
+        /// Opens the player's ender chest inventory screen for them.
+        open-ender-chest: func ();
 
         // Status
 
@@ -720,6 +1039,91 @@ interface player {
         /// Sets which skin parts are visible.
         set-skin-parts: func(parts: skin-parts);
 
+        // Per-Player Environment & Overrides
+
+        /// Overrides the time of day shown to this player.
+        set-player-time: func(time: u64, relative: bool);
+        /// Resets the player's time to sync with the server world time.
+        reset-player-time: func();
+        /// Returns the custom time set for this player, if any.
+        get-player-time: func() -> option<u64>;
+        /// Checks if the custom player time is relative to the world time.
+        is-player-time-relative: func() -> bool;
+
+        /// Overrides the weather condition shown to this player.
+        set-player-weather: func(weather: player-weather);
+        /// Resets the player's weather to match the server world weather.
+        reset-player-weather: func();
+        /// Returns the custom weather set for this player, if any.
+        get-player-weather: func() -> option<player-weather>;
+
+        /// Sets the position where the player's compass points.
+        set-compass-target: func(pos: position);
+        /// Returns the position where the player's compass currently points.
+        get-compass-target: func() -> position;
+
+        /// Sets the player's custom respawn / bed location.
+        set-respawn-location: func(pos: position);
+        /// Returns the player's custom respawn / bed location, if set.
+        get-respawn-location: func() -> option<position>;
+
+        /// Hides another player from this player's view (vanish).
+        hide-player: func(other: player);
+        /// Shows a previously hidden player to this player.
+        show-player: func(other: player);
+        /// Checks if this player can see another specified player.
+        can-see: func(other: player) -> bool;
+        /// Checks if this player can see another specified player.
+        can-see-player: func(other: player) -> bool;
+
+        /// Sets the tab list ping / latency indicator in milliseconds.
+        set-tab-list-ping: func(latency-ms: s32);
+
+        /// Sets a client-side item cooldown overlay.
+        set-item-cooldown: func(item-id: string, ticks: s32);
+        /// Returns the remaining cooldown ticks for an item, if active.
+        get-item-cooldown: func(item-id: string) -> option<s32>;
+        /// Checks if an item is currently on cooldown.
+        has-item-cooldown: func(item-id: string) -> bool;
+
+        /// Raycasts from the player's eyes to find the block being targeted.
+        get-target-block: func(max-distance: u32) -> option<position>;
+        /// Launches a projectile from the player's eyes in their line of sight.
+        launch-projectile: func(%type: projectile-type) -> option<entity>;
+
+        // Advancements
+
+        /// Returns the progress of the specified advancement for this player, if the advancement exists.
+        get-advancement-progress: func(advancement-id: string) -> option<advancement-progress>;
+
+        /// Awards a specific criterion of an advancement to the player.
+        /// Returns true if the criterion was successfully awarded (was not already completed).
+        award-advancement-criterion: func(advancement-id: string, criterion: string) -> bool;
+
+        /// Revokes a specific criterion of an advancement from the player.
+        /// Returns true if the criterion was successfully revoked (was previously completed).
+        revoke-advancement-criterion: func(advancement-id: string, criterion: string) -> bool;
+
+        /// Awards all criteria of the specified advancement to the player.
+        /// Returns true if any criterion was newly awarded.
+        award-advancement: func(advancement-id: string) -> bool;
+
+        /// Revokes all criteria of the specified advancement from the player.
+        /// Returns true if any criterion was newly revoked.
+        revoke-advancement: func(advancement-id: string) -> bool;
+
+        /// Checks whether the player has completed the specified advancement.
+        has-advancement: func(advancement-id: string) -> bool;
+
+        /// Returns a list of all advancement IDs completed by this player.
+        get-completed-advancements: func() -> list<string>;
+
+        /// Returns the ID of the currently selected advancement tab for this player, if any.
+        get-selected-advancement-tab: func() -> option<string>;
+
+        /// Sets the selected advancement tab for this player (must be a root advancement ID).
+        set-selected-advancement-tab: func(tab-id: option<string>);
+
         /// Returns a Java-specific player handle, if the player is connected via Java Edition.
         ///
         /// This allows access to Java-exclusive features like sending specific packets
@@ -731,6 +1135,62 @@ interface player {
         /// This allows access to Bedrock-exclusive features like custom forms
         /// or detailed device information.
         as-bedrock: func() -> option<bedrock-player>;
+    }
+
+    /// Represents a resource pack sent to a Java Edition player.
+    record java-resource-pack {
+        /// Unique identifier for the resource pack.
+        id: uuid,
+        /// The URL to the resource pack file.
+        url: string,
+        /// The SHA1 hash (40-character hex string) of the pack.
+        hash: string,
+        /// Whether the player is forced to accept the pack.
+        forced: bool,
+        /// Optional prompt message displayed in the pack acceptance screen.
+        prompt-message: option<text-component>,
+    }
+
+    /// Represents an individual Bedrock Edition resource pack entry.
+    record bedrock-resource-pack-entry {
+        /// Unique identifier for the Bedrock pack.
+        id: uuid,
+        /// Version string of the Bedrock pack (e.g., "1.0.0").
+        version: string,
+        /// Size of the pack in bytes.
+        size: u64,
+        /// Download URL for remote Bedrock packs.
+        download-url: string,
+        /// Optional encryption content key for encrypted packs.
+        content-key: option<string>,
+        /// Optional sub-pack name inside the archive.
+        sub-pack-name: option<string>,
+        /// Optional content identifier.
+        content-id: option<string>,
+        /// Whether the pack contains client scripts.
+        has-scripts: bool,
+        /// Whether the pack is marked as an addon pack.
+        addon-pack: bool,
+        /// Whether Ray Tracing / RTX features are enabled for the pack.
+        rtx-enabled: bool,
+    }
+
+    /// Represents the resource packs information payload sent to Bedrock clients.
+    record bedrock-resource-packs-info {
+        /// If true, players cannot join without accepting packs.
+        required: bool,
+        /// Whether the server offers addon packs.
+        has-addon-packs: bool,
+        /// Whether any of the packs contain client scripts.
+        has-scripts: bool,
+        /// Whether vibrant visuals should be forced disabled.
+        is-vibrant-visuals-force-disabled: bool,
+        /// World template ID, if any.
+        world-template-id: option<uuid>,
+        /// World template version, if any.
+        world-template-version: option<string>,
+        /// List of resource packs to send to the player.
+        packs: list<bedrock-resource-pack-entry>,
     }
 
     /// A handle to a player connected via the Java Edition.
@@ -758,6 +1218,24 @@ interface player {
 
         /// Clears any currently shown dialog for the player.
         clear-dialog: func();
+
+        /// Returns the Java scoreboard handle for this player.
+        get-scoreboard: func() -> scoreboard;
+
+        /// Resets the player's custom Java scoreboard back to the world scoreboard.
+        reset-scoreboard: func();
+
+        /// Sends a resource pack to the Java player.
+        send-resource-pack: func(pack: java-resource-pack);
+
+        /// Removes a specific resource pack by UUID for the Java player.
+        remove-resource-pack: func(id: uuid);
+
+        /// Clears all custom resource packs for the Java player.
+        clear-resource-packs: func();
+
+        /// Kicks the Java player with the specified options.
+        kick: func(options: java-kick-options);
     }
 
     /// A handle to a player connected via the Bedrock Edition.
@@ -790,6 +1268,18 @@ interface player {
 
         /// Opens a Bedrock custom form for the player.
         open-form: func(form: form) -> u32;
+
+        /// Returns the Bedrock scoreboard handle for this player.
+        get-scoreboard: func() -> bedrock-scoreboard;
+
+        /// Resets the player's custom Bedrock scoreboard back to the world scoreboard.
+        reset-scoreboard: func();
+
+        /// Sends resource packs information to the Bedrock player.
+        send-resource-packs-info: func(info: bedrock-resource-packs-info);
+
+        /// Kicks the Bedrock player with the specified options.
+        kick: func(options: bedrock-kick-options);
     }
 
     /// Returns a list of all players in a specific world.

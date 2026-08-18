@@ -8,6 +8,8 @@ world plugin {
     use event.{event};
     use server.{server as server-instance};
     use command.{command-sender, consumed-args, command-error, command-suggestions, suggestion-request};
+    use %world.{entity, chunk-buffer, generation-phase};
+    use ipc.{plugin-id, ipc-message};
 
     // --- Host-provided imports ---
 
@@ -39,6 +41,34 @@ world plugin {
     import forms;
     /// Provides Java Edition dialogs.
     import java-dialogs;
+    /// Provides status effect types and instances.
+    import status-effect;
+    /// Provides block entity types and instances.
+    import block-entity;
+    /// Provides 1 : 1 inter-plugin communication
+    import ipc;
+    /// Provides entity attribute types and modifiers.
+    import attributes;
+    /// Provides player management.
+    import player;
+    /// Provides advancement definitions and progress types.
+    import advancement;
+    /// Provides custom recipe registration and management.
+    import recipe;
+    /// Provides custom enchantment registration and management.
+    import enchantments;
+    /// Provides damage types.
+    import damage-types;
+    /// Provides screen / window types for GUIs and containers.
+    import screens;
+    /// Provides player statistics categories and types.
+    import statistics;
+    /// Provides Display and Interaction entities.
+    import display;
+    /// Provides game rules definitions and queries.
+    import game-rules;
+    /// Provides marketplace public key access for signature verification.
+    import marketplace;
 
     // --- Plugin-provided exports ---
 
@@ -68,4 +98,16 @@ world plugin {
 
     /// Dispatches a scheduled task execution to the plugin.
     export handle-task: func(handler-id: u32, server: server-instance);
+
+    /// Processes an incoming message from another plugin if possible, and returns (a possibly empty) response.
+    export handle-ipc-message: func(sender: plugin-id, message: ipc-message) -> result<ipc-message, string>;
+
+    export handle-ai-goal-can-start: func(goal-id: u32, server: server-instance, entity: entity) -> bool;
+    export handle-ai-goal-should-continue: func(goal-id: u32, server: server-instance, entity: entity) -> bool;
+    export handle-ai-goal-start: func(goal-id: u32, server: server-instance, entity: entity);
+    export handle-ai-goal-tick: func(goal-id: u32, server: server-instance, entity: entity);
+    export handle-ai-goal-stop: func(goal-id: u32, server: server-instance, entity: entity);
+
+    /// Dispatches a chunk generation phase to the plugin.
+    export handle-generate-phase: func(generator-id: u32, phase: generation-phase, chunk: chunk-buffer);
 }
