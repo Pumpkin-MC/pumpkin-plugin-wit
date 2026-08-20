@@ -1,8 +1,8 @@
 /// Represents a player connected to the Minecraft server.
 interface player {
-    use common.{hand, position, game-mode};
+    use common.{hand, position, game-mode, block-pos};
     use item-stack.{item-stack};
-    use %world.{%world, entity};
+    use %world.{%world, entity, block-flags};
     use permission.{permission-level};
     use text.{text-component};
     use gui.{gui};
@@ -969,6 +969,15 @@ interface player {
         clear-ender-chest: func ();
         /// Opens the player's ender chest inventory screen for them.
         open-ender-chest: func ();
+
+        /// Breaks the block at the given position like this player would:
+        /// updates the block state, spawns break particles and drops loot
+        /// (unless `skip-drops` is set).
+        ///
+        /// `BlockBreakEvent` is deliberately NOT re-fired for plugin-initiated
+        /// breaks: dispatching back into the calling plugin's event handler
+        /// while it is still running would deadlock on the plugin store lock.
+        break-block: func(%world: borrow<%world>, pos: block-pos, update-flags: block-flags);
 
         // Status
 
