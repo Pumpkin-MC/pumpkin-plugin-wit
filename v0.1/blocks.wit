@@ -4,50 +4,51 @@
 /// kind of block (~1,200 in MC 26.2); a **block state** is a specific
 /// property configuration (~32,366 in MC 26.2).
 ///
+/// Properties reflect the default state values for the block type.
+///
 /// ```wit
-/// let slab = blocks.block-type-from-name("minecraft:oak_slab");
+/// let slab = blocks.get-block-type("minecraft:oak_slab");
 /// blocks.block-type-has-tag(slab, "minecraft:slabs"); // true
 /// ```
 interface blocks {
-    /// Identifies a block type (e.g., oak slab, stone, diamond ore).
+    /// Detailed information about a block type (kind of block).
+    /// All properties reflect the default state values.
     record block-type {
         /// The internal numeric ID (0-65535).
         id: u16,
+        /// The full registry name (e.g., `"minecraft:oak_slab"`).
+        name: string,
+        /// The registry name with underscores replaced by spaces
+        /// (e.g., `"oak slab"`). For localized names, use the text interface.
+        display-name: string,
+        /// Mining hardness. 0.0 = instant break, negative = unbreakable.
+        hardness: f32,
+        /// Resistance to explosions.
+        blast-resistance: f32,
+        /// The color of this block when displayed on a map.
+        map-color: u8,
+        /// Whether this block type is solid by default.
+        is-solid: bool,
+        /// Whether this block type is air.
+        is-air: bool,
+        /// Whether this block type is a liquid (water, lava).
+        is-liquid: bool,
+        /// Whether this block type can catch fire.
+        burnable: bool,
+        /// Light emission level (0-15) from the default state.
+        light-emission: u8,
+        /// The default state ID for this block type.
+        default-state-id: u16,
     }
 
     /// Looks up a block type by registry name.
     /// Accepts both `"minecraft:oak_slab"` and `"oak_slab"`.
     /// Returns `null` if no match.
-    block-type-from-name: func(name: string) -> option<block-type>;
+    get-block-type: func(name: string) -> option<block-type>;
 
-    /// Returns the full registry name (e.g., `"minecraft:oak_slab"`).
-    block-type-name: func(bt: block-type) -> string;
-
-    /// Returns the registry name with underscores replaced by spaces
-    /// (e.g., `"oak slab"`). For localized names, use the text interface.
-    block-type-display-name: func(bt: block-type) -> string;
-
-    /// Whether this block type is solid by default.
-    block-type-is-solid: func(bt: block-type) -> bool;
-
-    /// Whether this block type is air.
-    block-type-is-air: func(bt: block-type) -> bool;
-
-    /// Whether this block type is a liquid (water, lava).
-    block-type-is-liquid: func(bt: block-type) -> bool;
-
-    /// Whether this block type can catch fire.
-    block-type-is-flammable: func(bt: block-type) -> bool;
-
-    /// Mining hardness from the default state.
-    /// 0.0 = instant break, negative = unbreakable (e.g., bedrock = -1.0).
-    block-type-hardness: func(bt: block-type) -> f32;
-
-    /// Resistance to explosions. Higher values mean the block is tougher.
-    block-type-blast-resistance: func(bt: block-type) -> f32;
-
-    /// Light emission level (0-15) from the default state.
-    block-type-light-emission: func(bt: block-type) -> u8;
+    /// Converts a block state ID to its parent block type.
+    /// Returns a block-type record with the same fields as `get-block-type`.
+    block-type-from-state-id: func(state-id: u16) -> option<block-type>;
 
     /// Whether a block type belongs to a tag.
     /// Accepts `"minecraft:slabs"` or `"slabs"`.
@@ -61,14 +62,8 @@ interface blocks {
     /// Results are capped at 256 members; larger tags are truncated.
     get-block-tag-members: func(tag: string) -> list<block-type>;
 
-    /// Returns the default state ID for this block type.
-    block-type-default-state-id: func(bt: block-type) -> u16;
-
     /// Returns all possible state IDs for this block type.
     /// Capped at 256 IDs. Most blocks have 1-80 states;
     /// note blocks have 1,350 and will be truncated.
     block-type-all-state-ids: func(bt: block-type) -> list<u16>;
-
-    /// Converts a block state ID to its parent block type. O(1) lookup.
-    state-id-to-block-type: func(state-id: u16) -> block-type;
 }
