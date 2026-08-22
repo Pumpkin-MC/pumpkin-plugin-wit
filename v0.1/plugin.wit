@@ -77,8 +77,6 @@ world plugin {
     import potions;
     /// Provides entity status / animation event types.
     import entity-statuses;
-    /// Provides marketplace public key access for signature verification.
-    import marketplace;
     /// Provides a plugin configuration API.
     import config;
 
