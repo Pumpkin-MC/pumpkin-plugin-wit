@@ -61,6 +61,9 @@ interface java-packets {
     slot-id: s32,
     selected-item-index: s32,
   }
+  record s-change-difficulty {
+    difficulty: string,
+  }
   record s-change-game-mode {
     game-mode: string,
   }
@@ -69,6 +72,15 @@ interface java-packets {
   }
   record s-chat-command {
     command: string,
+  }
+  record s-chat-command-signed {
+    command: string,
+    timestamp: s64,
+    salt: s64,
+    argument-signatures: list<string>,
+    message-count: s32,
+    acknowledged: list<u8>,
+    checksum: u8,
   }
   record s-chat-message {
     message: string,
@@ -196,6 +208,8 @@ interface java-packets {
   }
   record s-player-abilities {
     %flags: u8,
+    fly-speed: option<f32>,
+    walk-speed: option<f32>,
   }
   record s-player-action {
     status: s32,
@@ -280,8 +294,7 @@ interface java-packets {
     clicked-item: string,
   }
   record s-set-game-rule {
-    rule: string,
-    value: string,
+    entries: list<string>,
   }
   record s-set-held-item {
     slot: s32,
@@ -527,6 +540,25 @@ interface java-packets {
     source-direct-id: s32,
     source-position: option<tuple<f64, f64, f64>>,
   }
+  record c-debug-block-value {
+    pos: tuple<s32, s32, s32>,
+    name: string,
+    value: string,
+  }
+  record c-debug-chunk-value {
+    chunk-pos: string,
+    name: string,
+    value: string,
+  }
+  record c-debug-entity-value {
+    entity-id: s32,
+    name: string,
+    value: string,
+  }
+  record c-debug-event {
+    name: string,
+    data: list<u8>,
+  }
   record c-debug-sample {
     sample: list<s64>,
     sample-type: s32,
@@ -588,6 +620,12 @@ interface java-packets {
   record c-game-rule-values {
     rules: list<string>,
   }
+  record c-game-test-highlight-pos {
+    pos: tuple<s32, s32, s32>,
+    color: s32,
+    label: string,
+    duration-ms: s32,
+  }
   record c-head-rot {
     entity-id: s32,
     head-yaw: u8,
@@ -618,6 +656,11 @@ interface java-packets {
     location: tuple<s32, s32, s32>,
     data: s32,
     disable-relative-volume: bool,
+  }
+  record c-light-update {
+    chunk-x: s32,
+    chunk-z: s32,
+    light-data: string,
   }
   record c-login {
     entity-id: s32,
@@ -652,6 +695,13 @@ interface java-packets {
   record c-move-minecart-along-track {
     entity-id: s32,
     steps: list<string>,
+  }
+  record c-move-vehicle {
+    x: f64,
+    y: f64,
+    z: f64,
+    yaw: f32,
+    pitch: f32,
   }
   record c-multi-block-update {
     chunk-section: s64,
@@ -755,6 +805,9 @@ interface java-packets {
   record c-recipe-book-add {
     replace: bool,
   }
+  record c-recipe-book-remove {
+    recipes: list<s32>,
+  }
   record c-recipe-book-settings {
     crafting-open: bool,
     crafting-filtering: bool,
@@ -814,6 +867,9 @@ interface java-packets {
   record c-set-camera {
     camera-id: s32,
   }
+  record c-set-chunk-cache-radius {
+    radius: s32,
+  }
   record c-set-container-content {
     window-id: s32,
     state-id: s32,
@@ -867,6 +923,9 @@ interface java-packets {
     parameters: option<string>,
     players: list<string>,
   }
+  record c-set-simulation-distance {
+    simulation-distance: s32,
+  }
   record c-update-time {
     game-time: s64,
     clock-updates: list<string>,
@@ -912,6 +971,14 @@ interface java-packets {
     velocity: string,
     metadata: option<list<u8>>,
   }
+  record c-spawn-painting {
+    entity-id: s32,
+    uuid: uuid,
+    title: string,
+    %variant: s32,
+    location: tuple<s32, s32, s32>,
+    direction: u8,
+  }
   record c-stop-sound {
     sound-id: option<string>,
     category: option<string>,
@@ -944,6 +1011,11 @@ interface java-packets {
     pitch: f32,
     relatives: list<string>,
     on-ground: bool,
+  }
+  record c-test-instance-block-status {
+    pos: tuple<s32, s32, s32>,
+    status: s32,
+    message: option<string>,
   }
   record c-ticking-state {
     tick-rate: f32,
@@ -1003,6 +1075,9 @@ interface java-packets {
     render-type: s32,
     number-format: option<string>,
   }
+  record c-update-recipes {
+    raw-data: list<u8>,
+  }
   record c-update-score {
     entity-name: string,
     objective-name: string,
@@ -1048,9 +1123,11 @@ interface java-packets {
     s-attack(s-attack),
     s-block-entity-tag-query(s-block-entity-tag-query),
     s-bundle-item-selected(s-bundle-item-selected),
+    s-change-difficulty(s-change-difficulty),
     s-change-game-mode(s-change-game-mode),
     s-chat-ack(s-chat-ack),
     s-chat-command(s-chat-command),
+    s-chat-command-signed(s-chat-command-signed),
     s-chat-message(s-chat-message),
     s-chunk-batch(s-chunk-batch),
     s-click-slot(s-click-slot),
@@ -1168,6 +1245,10 @@ interface java-packets {
     c-custom-payload(c-custom-payload),
     c-play-custom-report-details(c-play-custom-report-details),
     c-damage-event(c-damage-event),
+    c-debug-block-value(c-debug-block-value),
+    c-debug-chunk-value(c-debug-chunk-value),
+    c-debug-entity-value(c-debug-entity-value),
+    c-debug-event(c-debug-event),
     c-debug-sample(c-debug-sample),
     c-delete-chat(c-delete-chat),
     c-play-disconnect(c-play-disconnect),
@@ -1181,18 +1262,20 @@ interface java-packets {
     c-explosion(c-explosion),
     c-game-event(c-game-event),
     c-game-rule-values(c-game-rule-values),
+    c-game-test-highlight-pos(c-game-test-highlight-pos),
     c-head-rot(c-head-rot),
     c-hurt-animation(c-hurt-animation),
     c-initialize-world-border(c-initialize-world-border),
     c-item-cooldown(c-item-cooldown),
     c-keep-alive(c-keep-alive),
     c-level-event(c-level-event),
-    c-light-update,
+    c-light-update(c-light-update),
     c-login(c-login),
     c-low-disk-space-warning,
     c-map-item-data(c-map-item-data),
     c-merchant-offers(c-merchant-offers),
     c-move-minecart-along-track(c-move-minecart-along-track),
+    c-move-vehicle(c-move-vehicle),
     c-multi-block-update(c-multi-block-update),
     c-open-book(c-open-book),
     c-open-mount-screen(c-open-mount-screen),
@@ -1212,6 +1295,7 @@ interface java-packets {
     c-player-spawn-position(c-player-spawn-position),
     c-projectile-power(c-projectile-power),
     c-recipe-book-add(c-recipe-book-add),
+    c-recipe-book-remove(c-recipe-book-remove),
     c-recipe-book-settings(c-recipe-book-settings),
     c-remove-entities(c-remove-entities),
     c-remove-mob-effect(c-remove-mob-effect),
@@ -1227,6 +1311,7 @@ interface java-packets {
     c-set-border-warning-delay(c-set-border-warning-delay),
     c-set-border-warning-distance(c-set-border-warning-distance),
     c-set-camera(c-set-camera),
+    c-set-chunk-cache-radius(c-set-chunk-cache-radius),
     c-set-container-content(c-set-container-content),
     c-set-container-property(c-set-container-property),
     c-set-container-slot(c-set-container-slot),
@@ -1238,6 +1323,7 @@ interface java-packets {
     c-set-passengers(c-set-passengers),
     c-set-player-inventory(c-set-player-inventory),
     c-set-player-team(c-set-player-team),
+    c-set-simulation-distance(c-set-simulation-distance),
     c-update-time(c-update-time),
     c-title-text(c-title-text),
     c-title-animation(c-title-animation),
@@ -1245,6 +1331,7 @@ interface java-packets {
     c-sound-effect(c-sound-effect),
     c-spawn-entity(c-spawn-entity),
     c-spawn-living-entity(c-spawn-living-entity),
+    c-spawn-painting(c-spawn-painting),
     c-start-configuration,
     c-stop-sound(c-stop-sound),
     c-store-cookie(c-store-cookie),
@@ -1253,6 +1340,7 @@ interface java-packets {
     c-tag-query-response(c-tag-query-response),
     c-take-item-entity(c-take-item-entity),
     c-teleport-entity(c-teleport-entity),
+    c-test-instance-block-status(c-test-instance-block-status),
     c-ticking-state(c-ticking-state),
     c-ticking-step(c-ticking-step),
     c-transfer(c-transfer),
@@ -1264,6 +1352,7 @@ interface java-packets {
     c-update-entity-rot(c-update-entity-rot),
     c-update-mob-effect(c-update-mob-effect),
     c-update-objectives(c-update-objectives),
+    c-update-recipes(c-update-recipes),
     c-update-score(c-update-score),
     c-use-bed(c-use-bed),
     c-waypoint(c-waypoint),
