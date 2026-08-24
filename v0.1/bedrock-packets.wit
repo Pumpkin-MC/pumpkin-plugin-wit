@@ -3,56 +3,53 @@ package pumpkin:plugin@0.1.0;
 interface bedrock-packets {
   use uuid.{ uuid };
   record s-actor-event {
-    entity-runtime-id: s64,
-    event-type: string,
-    event-data: s32,
+    target-runtime-id: s64,
+    event-id: string,
+    data: s32,
     fire-at-position: option<tuple<f64, f64, f64>>,
   }
   record s-animate {
     action: string,
-    runtime-entity-id: s64,
+    target-actor-runtime-id: s64,
     data: f32,
     swing-source: option<string>,
   }
   record s-block-pick-request {
-    block-pos: tuple<s32, s32, s32>,
-    add-block-nbt: bool,
-    hotbar-slot: u8,
+    position: tuple<s32, s32, s32>,
+    with-data: bool,
+    max-slots: u8,
   }
   record s-client-cache-blob-status {
     miss-hashes: list<s64>,
     hit-hashes: list<s64>,
   }
   record s-client-cache-status {
-    cache-supported: bool,
+    is-cache-supported: bool,
   }
   record s-command-request {
     command: string,
-    command-type: string,
-    command-uuid: uuid,
-    request-id: string,
-    player-actor-unique-id: s64,
-    is-internal-source: bool,
+    origin: string,
+    is-internal: bool,
     version: string,
   }
   record s-container-close {
     container-id: u8,
     container-type: u8,
-    server-initiated: bool,
+    server-initiated-close: bool,
   }
   record s-emote {
-    runtime-entity-id: s64,
-    emote-length: s32,
+    actor-runtime-id: s64,
     emote-id: string,
+    emote-length-ticks: s32,
     xuid: string,
     platform-id: string,
     %flags: u8,
   }
   record s-emote-list {
-    runtime-entity-id: s64,
-    emote-pieces: list<uuid>,
+    runtime-id: s64,
+    emote-piece-ids: list<uuid>,
   }
-  record s-interaction {
+  record s-interact {
     action: string,
     target-runtime-id: s64,
     position: option<tuple<f64, f64, f64>>,
@@ -69,8 +66,8 @@ interface bedrock-packets {
     requests: list<string>,
   }
   record s-loading-screen {
-    status: s32,
-    id: option<s32>,
+    loading-screen-packet-type: string,
+    loading-screen-id: option<s32>,
   }
   record s-login {
     protocol-version: s32,
@@ -80,25 +77,25 @@ interface bedrock-packets {
   record s-mob-equipment {
     entity-runtime-id: s64,
     item: string,
-    inventory-slot: u8,
-    hotbar-slot: u8,
-    window-id: u8,
+    slot: u8,
+    selected-slot: u8,
+    container-id: u8,
   }
   record s-modal-form-response {
     form-id: s32,
-    form-data: option<string>,
-    cancel-reason: option<u8>,
+    json-response: option<string>,
+    form-cancel-reason: option<u8>,
   }
   record s-packet-violation-warning {
     violation-type: s32,
-    severity: s32,
-    packet-id: s32,
-    context: string,
+    violation-severity: s32,
+    violation-packet-id: s32,
+    violation-context: string,
   }
   record s-player-action {
-    runtime-id: s64,
+    player-runtime-id: s64,
     action: string,
-    block-pos: tuple<s32, s32, s32>,
+    block-position: tuple<s32, s32, s32>,
     result-pos: tuple<s32, s32, s32>,
     face: s32,
   }
@@ -128,7 +125,7 @@ interface bedrock-packets {
   record s-player-hotbar {
     selected-slot: s32,
     container-id: u8,
-    select-slot: bool,
+    should-select-slot: bool,
   }
   record s-request-ability {
     ability: s32,
@@ -136,12 +133,12 @@ interface bedrock-packets {
   }
   record s-request-chunk-radius {
     chunk-radius: s32,
-    max-radius: u8,
+    max-chunk-radius: u8,
   }
   record s-request-network-settings {
-    protocol-version: s32,
+    client-network-version: s32,
   }
-  record s-resource-pack-response {
+  record s-resource-pack-client-response {
     response: u8,
     download-size: s32,
     pack-ids: list<string>,
@@ -152,14 +149,14 @@ interface bedrock-packets {
     player-runtime-id: s64,
   }
   record s-set-local-player-as-initialized {
-    runtime-entity-id: s64,
+    player-id: s64,
   }
   record s-set-player-inventory-options {
     left-inventory-tab: s32,
     right-inventory-tab: s32,
     filtering: bool,
-    inventory-layout: s32,
-    crafting-layout: s32,
+    layout-inv: s32,
+    layout-craft: s32,
   }
   record s-text {
     needs-translation: bool,
@@ -172,82 +169,86 @@ interface bedrock-packets {
     filtered-message: option<string>,
   }
   record c-add-actor {
-    entity-unique-id: s64,
-    entity-runtime-id: s64,
-    entity-type: string,
+    target-actor-id: s64,
+    target-runtime-id: s64,
+    actor-type: string,
     position: tuple<f64, f64, f64>,
     velocity: tuple<f64, f64, f64>,
-    pitch: f32,
-    yaw: f32,
-    head-yaw: f32,
-    body-yaw: f32,
-    attributes: list<string>,
-    metadata: string,
+    rotation: string,
+    y-head-rotation: f32,
+    y-body-rotation: f32,
+    attributes-list: list<string>,
+    actor-data: string,
     synced-properties: string,
-    links: list<string>,
+    actor-links: list<string>,
   }
   record c-add-item-actor {
-    entity-unique-id: s64,
-    entity-runtime-id: s64,
+    target-actor-id: s64,
+    target-runtime-id: s64,
     item: string,
     position: tuple<f64, f64, f64>,
     velocity: tuple<f64, f64, f64>,
-    metadata: string,
-    from-fishing: bool,
+    entity-data: string,
+    is-from-fishing: bool,
   }
   record c-add-player {
     uuid: uuid,
-    username: string,
-    entity-runtime-id: s64,
+    player-name: string,
+    target-runtime-id: s64,
     platform-chat-id: string,
     position: tuple<f64, f64, f64>,
     velocity: tuple<f64, f64, f64>,
-    pitch: f32,
-    yaw: f32,
-    head-yaw: f32,
-    held-item: string,
-    game-mode: s32,
-    metadata: string,
-    properties: string,
-    ability-data: string,
-    links: list<string>,
+    rotation: string,
+    y-head-rotation: f32,
+    carried-item: string,
+    player-game-type: string,
+    entity-data: string,
+    synced-properties: string,
+    abilities-data: string,
+    actor-links: list<string>,
     device-id: string,
     build-platform: string,
   }
   record c-available-commands {
     enum-values: list<string>,
     chained-subcommand-values: list<string>,
-    suffixes: list<string>,
-    enums: list<string>,
-    chained-subcommands: list<string>,
+    post-fixes: list<string>,
+    enum-data: list<string>,
+    chained-subcommand-data: list<string>,
     commands: list<string>,
     soft-enums: list<string>,
     constraints: list<string>,
   }
   record c-block-actor-data {
-    position: tuple<s32, s32, s32>,
-    data: string,
+    block-position: tuple<s32, s32, s32>,
+    actor-data-tags: string,
   }
   record c-block-event {
-    position: tuple<s32, s32, s32>,
+    block-position: tuple<s32, s32, s32>,
     event-type: s32,
-    event-data: s32,
+    event-value: s32,
   }
   record c-boss-event {
     boss-entity-id: s64,
-    action: string,
+    player-entity-id: s64,
+    event-type: u8,
+    title: string,
+    filtered-title: string,
+    health-percentage: f32,
+    color: u8,
+    overlay: u8,
   }
   record c-change-dimension {
-    dimension: s32,
+    dimension-id: s32,
     position: tuple<f64, f64, f64>,
     respawn: bool,
     loading-screen-id: option<s32>,
   }
-  record c-chunk-radius-update {
+  record c-chunk-radius-updated {
     chunk-radius: s32,
   }
   record c-client-cache-miss-response {
-    blobs: list<string>,
+    missing-blobs: list<string>,
   }
   record c-container-open {
     container-id: u8,
@@ -255,7 +256,7 @@ interface bedrock-packets {
     position: tuple<s32, s32, s32>,
     target-entity-id: s64,
   }
-  record c-correct-player-move {
+  record c-correct-player-move-prediction {
     prediction-type: u8,
     pos: tuple<f64, f64, f64>,
     pos-delta: tuple<f64, f64, f64>,
@@ -272,14 +273,14 @@ interface bedrock-packets {
     groups: list<string>,
     entries: list<string>,
   }
-  record c-disconnect-player {
+  record c-disconnect {
     reason: s32,
     skip-message: bool,
     message: string,
     filtered-message: string,
   }
   record c-gamerules-changed {
-    rule-data: string,
+    rule-data: list<string>,
   }
   record c-inventory-content {
     container-id: s32,
@@ -288,10 +289,10 @@ interface bedrock-packets {
     storage-item: string,
   }
   record c-inventory-slot {
-    window-id: s32,
-    inventory-slot: s32,
-    container-name: option<string>,
-    storage: option<string>,
+    container-id: s32,
+    slot: s32,
+    full-container-name: option<string>,
+    storage-item: option<string>,
     item: string,
   }
   record c-item-registry {
@@ -312,43 +313,43 @@ interface bedrock-packets {
     data: s32,
   }
   record c-level-sound-event {
-    sound-id: string,
+    sound-event: string,
     position: tuple<f64, f64, f64>,
-    extra-data: s32,
-    entity-type: string,
-    is-baby-mob: bool,
+    data: s32,
+    actor-identifier: string,
+    is-baby: bool,
     is-global: bool,
     actor-unique-id: s64,
     fire-at-position: option<tuple<f64, f64, f64>>,
   }
   record c-mob-effect {
-    runtime-entity-id: s64,
+    target-runtime-id: s64,
     event-id: u8,
     effect-id: s32,
-    amplifier: s32,
-    particles: bool,
-    duration: s32,
+    effect-amplifier: s32,
+    show-particles: bool,
+    effect-duration-ticks: s32,
     tick: s64,
     ambient: bool,
   }
   record c-mob-equipment {
-    entity-runtime-id: s64,
+    target-runtime-id: s64,
     item: string,
-    inventory-slot: u8,
-    hotbar-slot: u8,
-    window-id: u8,
+    slot: u8,
+    selected-slot: u8,
+    container-id: u8,
   }
   record c-modal-form-request {
     form-id: s32,
-    form-data: string,
+    form-ui-json: string,
   }
   record c-move-actor-absolute {
-    entity-runtime-id: s64,
-    %flags: u8,
+    actor-runtime-id: s64,
+    header: u8,
     position: tuple<f64, f64, f64>,
-    pitch: u8,
-    yaw: u8,
-    head-yaw: u8,
+    rotation-x: u8,
+    rotation-y: u8,
+    rotation-y-head: u8,
   }
   record c-move-actor-delta {
     entity-runtime-id: s64,
@@ -380,7 +381,7 @@ interface bedrock-packets {
   }
   record c-network-settings {
     compression-threshold: s32,
-    compression-method: s32,
+    compression-algorithm: s32,
     client-throttle-enabled: bool,
     client-throttle-threshold: u8,
     client-throttle-scalar: f32,
@@ -400,19 +401,22 @@ interface bedrock-packets {
   record c-player-hotbar {
     selected-slot: s32,
     container-id: u8,
-    should-select-block: bool,
+    should-select-slot: bool,
   }
   record c-player-list {
     action: u8,
     entries: list<string>,
   }
   record c-remove-actor {
-    entity-unique-id: s64,
+    target-actor-id: s64,
+  }
+  record c-remove-objective {
+    objective-name: string,
   }
   record c-resource-pack-stack-packet {
-    resource-pack-required: bool,
-    resource-packs: list<string>,
-    game-version: string,
+    texture-pack-required: bool,
+    texture-pack-list: list<string>,
+    base-game-version: string,
     experiments: string,
     include-editor-packs: bool,
   }
@@ -420,33 +424,13 @@ interface bedrock-packets {
     resource-pack-required: bool,
     has-addon-packs: bool,
     has-scripts: bool,
-    is-vibrant-visuals-force-disabled: bool,
-    world-template-id: uuid,
-    world-template-version: string,
+    force-disable-vibrant-visuals: bool,
+    world-template-id-and-version: string,
     resource-packs: list<string>,
   }
-  record c-respawn {
-    position: tuple<f64, f64, f64>,
-    state: string,
-    player-runtime-id: s64,
-  }
-  record c-set-display-objective {
-    display-slot: string,
-    objective-name: string,
-    display-name: string,
-    criteria-name: string,
-    sort-order: s32,
-  }
-  record c-set-score {
-    action: s32,
-    entries: list<string>,
-  }
-  record c-remove-objective {
-    objective-name: string,
-  }
   record c-set-actor-data {
-    actor-runtime-id: s64,
-    metadata: string,
+    target-runtime-id: s64,
+    actor-data: string,
     synced-properties: string,
     tick: s64,
   }
@@ -461,34 +445,45 @@ interface bedrock-packets {
   record c-set-difficulty {
     difficulty: s32,
   }
+  record c-set-display-objective {
+    display-slot-name: string,
+    objective-name: string,
+    objective-display-name: string,
+    criteria-name: string,
+    sort-order: s32,
+  }
   record c-set-health {
     health: s32,
   }
-  record c-set-player-gamemode {
-    gamemode: string,
+  record c-set-player-game-type {
+    player-game-type: string,
+  }
+  record c-set-score {
+    action: s32,
+    entries: list<string>,
   }
   record c-set-spawn-position {
-    spawn-type: s32,
-    position: tuple<s32, s32, s32>,
-    dimension: s32,
-    spawn-position: tuple<s32, s32, s32>,
+    spawn-position-type: string,
+    block-position: tuple<s32, s32, s32>,
+    dimension-type: s32,
+    spawn-block-pos: tuple<s32, s32, s32>,
   }
   record c-set-time {
     time: s32,
   }
   record c-set-title {
-    action-type: s32,
-    text: string,
-    fade-in-duration: s32,
-    remain-duration: s32,
-    fade-out-duration: s32,
+    title-type: string,
+    title-text: string,
+    fade-in-time: s32,
+    stay-time: s32,
+    fade-out-time: s32,
     xuid: string,
     platform-online-id: string,
-    filtered-message: string,
+    filtered-title-message: string,
   }
   record c-show-credits {
     player-runtime-id: s64,
-    status: s32,
+    credits-state: s32,
   }
   record c-start-game {
     entity-id: s64,
@@ -526,23 +521,20 @@ interface bedrock-packets {
     actor-runtime-id: s64,
   }
   record c-transfer {
-    address: string,
-    port: s32,
+    server-address: string,
+    server-port: s32,
     reload-world: bool,
   }
   record c-update-abilities {
-    target-player-raw-id: s64,
-    player-permission: u8,
-    command-permission: u8,
-    layers: list<string>,
+    data: string,
   }
   record c-update-attributes {
-    runtime-id: s64,
-    attributes: list<string>,
-    player-tick: s64,
+    target-runtime-id: s64,
+    attribute-list: list<string>,
+    tick: s64,
   }
   record c-update-block {
-    position: tuple<s32, s32, s32>,
+    block-position: tuple<s32, s32, s32>,
     block-runtime-id: s32,
     %flags: s32,
     layer: s32,
@@ -569,7 +561,7 @@ interface bedrock-packets {
     s-container-close(s-container-close),
     s-emote(s-emote),
     s-emote-list(s-emote-list),
-    s-interaction(s-interaction),
+    s-interact(s-interact),
     s-inventory-transaction(s-inventory-transaction),
     s-item-stack-request(s-item-stack-request),
     s-loading-screen(s-loading-screen),
@@ -583,7 +575,7 @@ interface bedrock-packets {
     s-request-ability(s-request-ability),
     s-request-chunk-radius(s-request-chunk-radius),
     s-request-network-settings(s-request-network-settings),
-    s-resource-pack-response(s-resource-pack-response),
+    s-resource-pack-client-response(s-resource-pack-client-response),
     s-respawn(s-respawn),
     s-set-local-player-as-initialized(s-set-local-player-as-initialized),
     s-set-player-inventory-options(s-set-player-inventory-options),
@@ -600,13 +592,13 @@ interface bedrock-packets {
     c-block-event(c-block-event),
     c-boss-event(c-boss-event),
     c-change-dimension(c-change-dimension),
-    c-chunk-radius-update(c-chunk-radius-update),
+    c-chunk-radius-updated(c-chunk-radius-updated),
     c-client-cache-miss-response(c-client-cache-miss-response),
     c-container-open(c-container-open),
-    c-correct-player-move(c-correct-player-move),
+    c-correct-player-move-prediction(c-correct-player-move-prediction),
     c-crafting-data(c-crafting-data),
     c-creative-content(c-creative-content),
-    c-disconnect-player(c-disconnect-player),
+    c-disconnect(c-disconnect),
     c-gamerules-changed(c-gamerules-changed),
     c-inventory-content(c-inventory-content),
     c-inventory-slot(c-inventory-slot),
@@ -627,18 +619,17 @@ interface bedrock-packets {
     c-player-hotbar(c-player-hotbar),
     c-player-list(c-player-list),
     c-remove-actor(c-remove-actor),
+    c-remove-objective(c-remove-objective),
     c-resource-pack-stack-packet(c-resource-pack-stack-packet),
     c-resource-packs-info(c-resource-packs-info),
-    c-respawn(c-respawn),
-    c-set-display-objective(c-set-display-objective),
-    c-set-score(c-set-score),
-    c-remove-objective(c-remove-objective),
     c-set-actor-data(c-set-actor-data),
     c-set-actor-link(c-set-actor-link),
     c-set-actor-motion(c-set-actor-motion),
     c-set-difficulty(c-set-difficulty),
+    c-set-display-objective(c-set-display-objective),
     c-set-health(c-set-health),
-    c-set-player-gamemode(c-set-player-gamemode),
+    c-set-player-game-type(c-set-player-game-type),
+    c-set-score(c-set-score),
     c-set-spawn-position(c-set-spawn-position),
     c-set-time(c-set-time),
     c-set-title(c-set-title),
