@@ -817,7 +817,7 @@ interface player {
         /// Returns the player's permission level (0-4).
         get-permission-level: func () -> permission-level;
         /// Sets the player's permission level.
-        set-permission-level: func (level: permission-level);
+        set-permission-level: async func (level: permission-level);
         /// Grants or denies a specific permission node for the player.
         set-permission: func(node: string, value: bool);
         /// Removes an explicitly set permission node from the player.
@@ -829,64 +829,64 @@ interface player {
         /// Returns the player's display name, which may include formatting.
         get-display-name: func () -> text-component;
         /// Sets the player's display name.
-        set-display-name: func (display-name: text-component);
+        set-display-name: async func (display-name: text-component);
         /// Gets the player's custom tab list name.
         get-tab-list-name: func () -> option<text-component>;
         /// Sets the player's custom tab list name.
-        set-tab-list-name: func (name: option<text-component>);
+        set-tab-list-name: async func (name: option<text-component>);
 
         // Messaging & titles
 
         /// Sends a system message to the player's chat.
-        send-system-message: func (text: text-component, overlay: bool);
+        send-system-message: async func (text: text-component, overlay: bool);
         /// Sets the header and footer of the player's Tab list.
-        set-tab-list-header-footer: func (header: text-component, footer: text-component);
+        set-tab-list-header-footer: async func (header: text-component, footer: text-component);
 
         /// Sets the sorting order of the player in the Tab list.
-        set-tab-list-order: func (order: s32);
+        set-tab-list-order: async func (order: s32);
         /// Sets the latency (ping) shown for the player in the Tab list.
-        set-tab-list-latency: func (latency: s32);
+        set-tab-list-latency: async func (latency: s32);
         /// Sets whether the player is visible in the Tab list.
-        set-tab-list-listed: func (listed: bool);
+        set-tab-list-listed: async func (listed: bool);
 
         /// Shows a large title on the player's screen.
 
-        show-title: func (text: text-component);
+        show-title: async func (text: text-component);
         /// Shows a smaller subtitle on the player's screen.
-        show-subtitle: func (text: text-component);
+        show-subtitle: async func (text: text-component);
         /// Shows a message in the action bar area.
-        show-actionbar: func (text: text-component);
+        show-actionbar: async func (text: text-component);
         /// Sets the fade-in, stay, and fade-out times for titles.
-        send-title-animation: func (fade-in: s32, stay: s32, fade-out: s32);
+        send-title-animation: async func (fade-in: s32, stay: s32, fade-out: s32);
 
         // Teleport & kick
 
         /// Teleports the player to a position in a world.
-        teleport: func (position: position, yaw: option<f32>, pitch: option<f32>, %world: %world);
+        teleport: async func (position: position, yaw: option<f32>, pitch: option<f32>, %world: %world);
         /// Teleports the player to another world at a specific position.
-        teleport-world: func (world-ref: %world, position: position, yaw: option<f32>, pitch: option<f32>);
+        teleport-world: async func (world-ref: %world, position: position, yaw: option<f32>, pitch: option<f32>);
         /// Forces the player to respawn.
-        respawn: func ();
+        respawn: async func ();
 
         /// Opens a GUI for the player.
-        open-gui: func (gui-ref: gui);
+        open-gui: async func (gui-ref: gui);
 
         /// Bans the player with the specified options.
-        ban: func (options: ban-player-options);
+        ban: async func (options: ban-player-options);
         /// Bans the player's IP address with the specified options.
-        ban-ip: func (options: ban-ip-options);
+        ban-ip: async func (options: ban-ip-options);
 
         /// Transfers the player to another server.
-        transfer: func (host: string, port: u16);
+        transfer: async func (host: string, port: u16);
 
         // Status Effects
 
         /// Gives a status effect to the player.
-        add-effect: func(effect: status-effect-instance);
+        add-effect: async func(effect: status-effect-instance);
         /// Removes a status effect from the player.
-        remove-effect: func(effect: status-effect-type);
+        remove-effect: async func(effect: status-effect-type);
         /// Clears all active status effects from the player.
-        clear-effects: func();
+        clear-effects: async func();
         /// Checks if a status effect is currently applied to the player.
         has-effect: func(effect: status-effect-type) -> bool;
         /// Returns the status effect instance applied to the player, if any.
@@ -897,11 +897,11 @@ interface player {
         // Health & Damage
 
         /// Heals the player by a specified amount.
-        heal: func(amount: f32);
+        heal: async func(amount: f32);
         /// Deals damage to the player by a specified amount with a damage type.
-        damage: func(amount: f32, damage-type: damage-type);
+        damage: async func(amount: f32, damage-type: damage-type);
         /// Kills the player instantly.
-        kill: func();
+        kill: async func();
 
         // Statistics
 
@@ -920,7 +920,7 @@ interface player {
         increment-custom-statistic: func(stat: custom-statistic, amount: s32);
 
         /// Sends the player's updated statistics packet to the client.
-        send-stats: func();
+        send-stats: async func();
 
         /// Gets the team name that this player belongs to on their active scoreboard, if any.
         get-team: func() -> option<string>;
@@ -928,7 +928,7 @@ interface player {
         // Cooldowns
 
         /// Starts an item cooldown for a specific item group name.
-        start-cooldown: func(group: string, duration-ticks: s32);
+        start-cooldown: async func(group: string, duration-ticks: s32);
         /// Returns the cooldown progress (0.0 to 1.0) for a specific item group.
         get-cooldown: func(group: string) -> f32;
         /// Checks if a specific item group is currently on cooldown.
@@ -937,13 +937,13 @@ interface player {
         // Abilities & Flight
 
         /// Sets whether the player is allowed to fly.
-        set-allow-flight: func(allowed: bool);
+        set-allow-flight: async func(allowed: bool);
         /// Sets the player's flying speed.
-        set-fly-speed: func(speed: f32);
+        set-fly-speed: async func(speed: f32);
         /// Sets the player's walking speed.
-        set-walk-speed: func(speed: f32);
+        set-walk-speed: async func(speed: f32);
         /// Sets whether the player is invulnerable to damage.
-        set-invulnerable: func(invulnerable: bool);
+        set-invulnerable: async func(invulnerable: bool);
 
         // Inventory
 
@@ -955,47 +955,47 @@ interface player {
         get-inventory-item: func (slot: u8) -> option<item-stack>;
 
         /// Sets the item in the specified hand.
-        set-item-in-hand: func (hand: hand, stack: option<item-stack>);
+        set-item-in-hand: async func (hand: hand, stack: option<item-stack>);
         /// Sets the item in the specified inventory slot.
-        set-inventory-item: func (slot: u8, stack: option<item-stack>);
+        set-inventory-item: async func (slot: u8, stack: option<item-stack>);
 
         // Ender Chest Inventory
 
         /// Returns the item in the specified ender chest slot (0-26).
         get-ender-chest-item: func (slot: u8) -> option<item-stack>;
         /// Sets the item in the specified ender chest slot (0-26).
-        set-ender-chest-item: func (slot: u8, stack: option<item-stack>);
+        set-ender-chest-item: async func (slot: u8, stack: option<item-stack>);
         /// Clears all items from the player's ender chest.
-        clear-ender-chest: func ();
+        clear-ender-chest: async func ();
         /// Opens the player's ender chest inventory screen for them.
-        open-ender-chest: func ();
+        open-ender-chest: async func ();
 
         // Status
 
         /// Returns the player's current health.
         get-health: func () -> f32;
         /// Sets the player's current health.
-        set-health: func (health: f32);
+        set-health: async func (health: f32);
         /// Returns the player's maximum health.
         get-max-health: func () -> f32;
         /// Sets the player's maximum health.
-        set-max-health: func (max-health: f32);
+        set-max-health: async func (max-health: f32);
         /// Returns the player's food level (0-20).
         get-food-level: func () -> u8;
         /// Sets the player's food level.
-        set-food-level: func (food-level: u8);
+        set-food-level: async func (food-level: u8);
         /// Returns the player's food saturation level.
         get-saturation: func () -> f32;
         /// Sets the player's food saturation level.
-        set-saturation: func (saturation: f32);
+        set-saturation: async func (saturation: f32);
         /// Returns the player's food exhaustion level.
         get-exhaustion: func () -> f32;
         /// Sets the player's food exhaustion level.
-        set-exhaustion: func (exhaustion: f32);
+        set-exhaustion: async func (exhaustion: f32);
         /// Returns the player's current absorption amount.
         get-absorption: func () -> f32;
         /// Sets the player's current absorption amount.
-        set-absorption: func (absorption: f32);
+        set-absorption: async func (absorption: f32);
 
         /// Returns the player's total experience level.
         get-experience-level:    func() -> s32;
@@ -1004,25 +1004,25 @@ interface player {
         /// Returns the total experience points the player has.
         get-experience-points:   func() -> s32;
         /// Sets the player's total experience level.
-        set-experience-level:    func(level: s32);
+        set-experience-level:    async func(level: s32);
         /// Sets the player's progress toward the next level.
-        set-experience-progress: func(progress: f32);
+        set-experience-progress: async func(progress: f32);
         /// Sets the player's total experience points.
-        set-experience-points:   func(points: s32);
+        set-experience-points:   async func(points: s32);
         /// Adds experience levels to the player.
-        add-experience-levels:   func(levels: s32);
+        add-experience-levels:   async func(levels: s32);
         /// Adds experience points to the player.
-        add-experience-points:   func(points: s32);
+        add-experience-points:   async func(points: s32);
 
         /// Returns whether the player is currently flying.
         is-flying:    func() -> bool;
         /// Sets whether the player should be flying.
-        set-flying:   func(flying: bool);
+        set-flying:   async func(flying: bool);
 
         /// Returns the player's current abilities.
         get-abilities: func() -> player-abilities;
         /// Updates the player's abilities.
-        set-abilities: func(abilities: player-abilities);
+        set-abilities: async func(abilities: player-abilities);
 
         /// Returns the player's IP address.
         get-ip: func() -> string;
@@ -1037,28 +1037,28 @@ interface player {
         /// Returns which skin parts are visible.
         get-skin-parts: func() -> skin-parts;
         /// Sets which skin parts are visible.
-        set-skin-parts: func(parts: skin-parts);
+        set-skin-parts: async func(parts: skin-parts);
 
         // Per-Player Environment & Overrides
 
         /// Overrides the time of day shown to this player.
-        set-player-time: func(time: u64, relative: bool);
+        set-player-time: async func(time: u64, relative: bool);
         /// Resets the player's time to sync with the server world time.
-        reset-player-time: func();
+        reset-player-time: async func();
         /// Returns the custom time set for this player, if any.
         get-player-time: func() -> option<u64>;
         /// Checks if the custom player time is relative to the world time.
         is-player-time-relative: func() -> bool;
 
         /// Overrides the weather condition shown to this player.
-        set-player-weather: func(weather: player-weather);
+        set-player-weather: async func(weather: player-weather);
         /// Resets the player's weather to match the server world weather.
-        reset-player-weather: func();
+        reset-player-weather: async func();
         /// Returns the custom weather set for this player, if any.
         get-player-weather: func() -> option<player-weather>;
 
         /// Sets the position where the player's compass points.
-        set-compass-target: func(pos: position);
+        set-compass-target: async func(pos: position);
         /// Returns the position where the player's compass currently points.
         get-compass-target: func() -> position;
 
@@ -1068,19 +1068,19 @@ interface player {
         get-respawn-location: func() -> option<position>;
 
         /// Hides another player from this player's view (vanish).
-        hide-player: func(other: player);
+        hide-player: async func(other: player);
         /// Shows a previously hidden player to this player.
-        show-player: func(other: player);
+        show-player: async func(other: player);
         /// Checks if this player can see another specified player.
         can-see: func(other: player) -> bool;
         /// Checks if this player can see another specified player.
         can-see-player: func(other: player) -> bool;
 
         /// Sets the tab list ping / latency indicator in milliseconds.
-        set-tab-list-ping: func(latency-ms: s32);
+        set-tab-list-ping: async func(latency-ms: s32);
 
         /// Sets a client-side item cooldown overlay.
-        set-item-cooldown: func(item-id: string, ticks: s32);
+        set-item-cooldown: async func(item-id: string, ticks: s32);
         /// Returns the remaining cooldown ticks for an item, if active.
         get-item-cooldown: func(item-id: string) -> option<s32>;
         /// Checks if an item is currently on cooldown.
@@ -1101,7 +1101,7 @@ interface player {
         /// Performs a raycast from the player's eyes to find the exact block and face being targeted.
         get-target-block-exact: func(max-distance: f64, include-fluids: bool) -> option<ray-trace-block-result>;
         /// Launches a projectile from the player's eyes in their line of sight.
-        launch-projectile: func(%type: projectile-type) -> option<entity>;
+        launch-projectile: async func(%type: projectile-type) -> option<entity>;
 
         // Advancements
 
@@ -1110,19 +1110,19 @@ interface player {
 
         /// Awards a specific criterion of an advancement to the player.
         /// Returns true if the criterion was successfully awarded (was not already completed).
-        award-advancement-criterion: func(advancement-id: string, criterion: string) -> bool;
+        award-advancement-criterion: async func(advancement-id: string, criterion: string) -> bool;
 
         /// Revokes a specific criterion of an advancement from the player.
         /// Returns true if the criterion was successfully revoked (was previously completed).
-        revoke-advancement-criterion: func(advancement-id: string, criterion: string) -> bool;
+        revoke-advancement-criterion: async func(advancement-id: string, criterion: string) -> bool;
 
         /// Awards all criteria of the specified advancement to the player.
         /// Returns true if any criterion was newly awarded.
-        award-advancement: func(advancement-id: string) -> bool;
+        award-advancement: async func(advancement-id: string) -> bool;
 
         /// Revokes all criteria of the specified advancement from the player.
         /// Returns true if any criterion was newly revoked.
-        revoke-advancement: func(advancement-id: string) -> bool;
+        revoke-advancement: async func(advancement-id: string) -> bool;
 
         /// Checks whether the player has completed the specified advancement.
         has-advancement: func(advancement-id: string) -> bool;
@@ -1134,7 +1134,7 @@ interface player {
         get-selected-advancement-tab: func() -> option<string>;
 
         /// Sets the selected advancement tab for this player (must be a root advancement ID).
-        set-selected-advancement-tab: func(tab-id: option<string>);
+        set-selected-advancement-tab: async func(tab-id: option<string>);
 
         /// Returns a Java-specific player handle, if the player is connected via Java Edition.
         ///
