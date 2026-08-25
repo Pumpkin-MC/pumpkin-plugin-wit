@@ -260,15 +260,15 @@ interface %world {
         get-pitch: func() -> f32;
         get-head-yaw: func() -> f32;
 
-        teleport: func(pos: position, world-ref: %world);
+        teleport: async func(pos: position, world-ref: %world);
         set-velocity: func(velocity: position);
         get-velocity: func() -> position;
 
         get-pose: func() -> entity-pose;
         get-name: func() -> text-component;
-        set-custom-name: func(name: text-component);
+        set-custom-name: async func(name: text-component);
         get-custom-name: func() -> option<text-component>;
-        set-custom-name-visible: func(visible: bool);
+        set-custom-name-visible: async func(visible: bool);
         is-custom-name-visible: func() -> bool;
 
         is-invulnerable: func() -> bool;
@@ -293,26 +293,26 @@ interface %world {
         /// Returns the base value of the specified attribute for this entity.
         get-attribute-base: func(attr: attribute) -> f64;
         /// Sets the base value of the specified attribute for this entity.
-        set-attribute-base: func(attr: attribute, value: f64);
+        set-attribute-base: async func(attr: attribute, value: f64);
         /// Adds or replaces an attribute modifier for the specified attribute.
-        add-attribute-modifier: func(attr: attribute, modifier: attribute-modifier);
+        add-attribute-modifier: async func(attr: attribute, modifier: attribute-modifier);
         /// Removes an attribute modifier by its identifier.
-        remove-attribute-modifier: func(attr: attribute, id: string);
+        remove-attribute-modifier: async func(attr: attribute, id: string);
         /// Returns all attribute modifiers currently attached to the specified attribute.
         get-attribute-modifiers: func(attr: attribute) -> list<attribute-modifier>;
         /// Resets the specified attribute to its default base value with no modifiers.
-        reset-attribute: func(attr: attribute);
+        reset-attribute: async func(attr: attribute);
         /// Resets all attributes on this entity to their default base values and removes all modifiers.
-        reset-all-attributes: func();
+        reset-all-attributes: async func();
 
         // Equipment
 
         /// Gets the item currently equipped in the specified slot, if any.
         get-equipment: func(slot: equipment-slot) -> option<item-stack>;
         /// Sets the item equipped in the specified slot and broadcasts the change to tracking clients.
-        set-equipment: func(slot: equipment-slot, stack: option<item-stack>);
+        set-equipment: async func(slot: equipment-slot, stack: option<item-stack>);
         /// Clears all equipment on this entity and broadcasts the removal.
-        clear-equipment: func();
+        clear-equipment: async func();
 
         get-age: func() -> s32;
         set-age: func(age: s32);
@@ -324,22 +324,22 @@ interface %world {
         set-ticks-lived: func(ticks: s32);
 
         is-sneaking: func() -> bool;
-        set-sneaking: func(sneaking: bool);
+        set-sneaking: async func(sneaking: bool);
         is-sprinting: func() -> bool;
-        set-sprinting: func(sprinting: bool);
+        set-sprinting: async func(sprinting: bool);
         is-swimming: func() -> bool;
-        set-swimming: func(swimming: bool);
+        set-swimming: async func(swimming: bool);
         is-invisible: func() -> bool;
-        set-invisible: func(invisible: bool);
+        set-invisible: async func(invisible: bool);
         is-glowing: func() -> bool;
-        set-glowing: func(glowing: bool);
+        set-glowing: async func(glowing: bool);
         is-fall-flying: func() -> bool;
-        set-fall-flying: func(fall-flying: bool);
+        set-fall-flying: async func(fall-flying: bool);
 
         is-silent: func() -> bool;
-        set-silent: func(silent: bool);
+        set-silent: async func(silent: bool);
         has-gravity: func() -> bool;
-        set-has-gravity: func(gravity: bool);
+        set-has-gravity: async func(gravity: bool);
 
         get-width: func() -> f32;
         get-height: func() -> f32;
@@ -348,18 +348,18 @@ interface %world {
 
         is-on-ground: func() -> bool;
         is-on-fire: func() -> bool;
-        set-on-fire: func(on-fire: bool);
+        set-on-fire: async func(on-fire: bool);
         has-visual-fire: func() -> bool;
-        set-visual-fire: func(visual-fire: bool);
+        set-visual-fire: async func(visual-fire: bool);
 
         get-portal-cooldown: func() -> u32;
         set-portal-cooldown: func(cooldown: u32);
 
         get-remaining-air: func() -> s32;
-        set-remaining-air: func(air: s32);
+        set-remaining-air: async func(air: s32);
         get-max-air: func() -> s32;
 
-        send-system-message: func(message: text-component);
+        send-system-message: async func(message: text-component);
 
         get-eye-height: func() -> f32;
         get-eye-position: func() -> position;
@@ -369,16 +369,16 @@ interface %world {
         get-vehicle: func() -> option<entity>;
         set-vehicle: func(vehicle: option<entity>);
         get-passengers: func() -> list<entity>;
-        add-passenger: func(passenger: entity);
-        remove-passenger: func(passenger: entity);
-        eject-passengers: func();
+        add-passenger: async func(passenger: entity);
+        remove-passenger: async func(passenger: entity);
+        eject-passengers: async func();
 
         get-bounding-box: func() -> bounding-box;
 
         is-in-water: func() -> bool;
         is-in-lava: func() -> bool;
 
-        remove: func();
+        remove: async func();
 
         /// Adds a built-in AI goal to this mob entity at the specified priority level.
         add-ai-goal: func(priority: u8, goal: builtin-ai-goal);
@@ -396,7 +396,7 @@ interface %world {
         is-ai-disabled: func() -> bool;
 
         /// Sets the target entity for this mob.
-        set-target: func(target: option<entity>);
+        set-target: async func(target: option<entity>);
 
         /// Gets the current target entity of this mob, if any.
         get-target: func() -> option<entity>;
@@ -468,7 +468,7 @@ interface %world {
 
         /// Sets the block state at the specified position relative to the chunk.
         /// X and Z must be in the range [0, 15].
-        set-block-state: func(pos: block-pos, state: u16);
+        set-block-state: async func(pos: block-pos, state: u16);
 
         /// Gets the block at the specified position relative to the chunk.
         /// X and Z must be in the range [0, 15].
@@ -476,11 +476,11 @@ interface %world {
 
         /// Sets the block at the specified position relative to the chunk using its default state.
         /// X and Z must be in the range [0, 15].
-        set-block: func(pos: block-pos, block: block);
+        set-block: async func(pos: block-pos, block: block);
 
         /// Sets the block by block ID at the specified position relative to the chunk using its default state.
         /// X and Z must be in the range [0, 15].
-        set-block-by-id: func(pos: block-pos, block-id: u16);
+        set-block-by-id: async func(pos: block-pos, block-id: u16);
 
         /// Gets the biome at the specified position relative to the chunk.
         /// X and Z must be in the range [0, 15].
@@ -528,11 +528,11 @@ interface %world {
         /// Gets the current diameter of the border (alias for get-diameter).
         get-size: func() -> f64;
         /// Sets the diameter of the border, optionally with a speed (in ticks) for lerping.
-        set-diameter: func(diameter: f64, speed: option<u64>);
+        set-diameter: async func(diameter: f64, speed: option<u64>);
         /// Sets the size of the border instantly.
-        set-size: func(size: f64);
+        set-size: async func(size: f64);
         /// Sets the size of the border with a transition duration in seconds.
-        set-size-transition: func(new-size: f64, time-seconds: u64);
+        set-size-transition: async func(new-size: f64, time-seconds: u64);
 
         /// Gets the target diameter when lerping/transitioning.
         get-target-diameter: func() -> f64;
@@ -542,16 +542,16 @@ interface %world {
         /// Gets the distance from the border where warning effects start (in blocks).
         get-warning-distance: func() -> s32;
         /// Sets the warning distance (in blocks).
-        set-warning-distance: func(distance: s32);
+        set-warning-distance: async func(distance: s32);
 
         /// Gets the time before a player hitting the border is warned (in seconds).
         get-warning-delay: func() -> s32;
         /// Sets the warning delay (in seconds).
-        set-warning-delay: func(delay: s32);
+        set-warning-delay: async func(delay: s32);
         /// Gets the warning time (alias for get-warning-delay).
         get-warning-time: func() -> s32;
         /// Sets the warning time (alias for set-warning-delay).
-        set-warning-time: func(time: s32);
+        set-warning-time: async func(time: s32);
 
         /// Gets the safe damage buffer distance outside the border (in blocks).
         get-damage-buffer: func() -> f64;
@@ -569,7 +569,7 @@ interface %world {
         contains-pos: func(pos: position) -> bool;
 
         /// Resets the world border to vanilla default settings.
-        reset: func();
+        reset: async func();
     }
 
     /// Represents an axis-aligned bounding box.
@@ -619,7 +619,7 @@ interface %world {
         get-block-state: func(pos: block-pos) -> block-state;
 
         /// Sets the block state at the specified position.
-        set-block-state: func(pos: block-pos, state: u16, update-flags: block-flags);
+        set-block-state: async func(pos: block-pos, state: u16, update-flags: block-flags);
 
         /// Gets the block type at the specified position.
         get-block: func(pos: block-pos) -> block;
@@ -628,20 +628,20 @@ interface %world {
         get-block-id: func(pos: block-pos) -> u16;
 
         /// Sets the block at the specified position using its default state.
-        set-block: func(pos: block-pos, block: block, update-flags: block-flags);
+        set-block: async func(pos: block-pos, block: block, update-flags: block-flags);
 
         /// Sets the block at the specified position by numerical block ID using its default state.
-        set-block-by-id: func(pos: block-pos, block-id: u16, update-flags: block-flags);
+        set-block-by-id: async func(pos: block-pos, block-id: u16, update-flags: block-flags);
 
         /// Sets the block at the specified position by namespaced name using its default state.
         /// Returns true if the block was recognized and set.
-        set-block-by-name: func(pos: block-pos, name: string, update-flags: block-flags) -> bool;
+        set-block-by-name: async func(pos: block-pos, name: string, update-flags: block-flags) -> bool;
 
         /// Returns the current time of day in ticks.
         get-time-of-day: func() -> u64;
 
         /// Sets the current time of day in ticks.
-        set-time-of-day: func(time: u64);
+        set-time-of-day: async func(time: u64);
 
         /// Returns the total age of the world in ticks.
         get-world-age: func() -> u64;
@@ -662,28 +662,28 @@ interface %world {
         is-raining: func() -> bool;
 
         /// Sets whether it should be raining or snowing.
-        set-raining: func(raining: bool);
+        set-raining: async func(raining: bool);
 
         /// Returns whether there is currently a thunderstorm.
         is-thundering: func() -> bool;
 
         /// Sets whether there should be a thunderstorm.
-        set-thundering: func(thundering: bool);
+        set-thundering: async func(thundering: bool);
 
         /// Broadcasts a system message to all players in this world.
-        broadcast-system-message: func(message: text-component, overlay: bool);
+        broadcast-system-message: async func(message: text-component, overlay: bool);
 
         /// Returns the scoreboard associated with this world.
         get-scoreboard: func() -> scoreboard;
 
         /// Plays a sound at the specified position for all players in the world.
-        play-sound: func(sound: sound, category: sound-category, pos: position, volume: f32, pitch: f32);
+        play-sound: async func(sound: sound, category: sound-category, pos: position, volume: f32, pitch: f32);
 
         /// Spawns particles at the specified position.
-        spawn-particle: func(particle: particle, pos: position, offset: position, max-speed: f32, count: s32);
+        spawn-particle: async func(particle: particle, pos: position, offset: position, max-speed: f32, count: s32);
 
         /// Creates an explosion at the specified position.
-        create-explosion: func(pos: position, power: f32, create-fire: bool, interaction: explosion-interaction);
+        create-explosion: async func(pos: position, power: f32, create-fire: bool, interaction: explosion-interaction);
 
         /// Returns the sea level of this world.
         get-sea-level: func() -> s32;
@@ -695,25 +695,25 @@ interface %world {
         get-sky-light: func(pos: block-pos) -> u8;
 
         /// Sets the sky light level at the specified position.
-        set-sky-light: func(pos: block-pos, level: u8);
+        set-sky-light: async func(pos: block-pos, level: u8);
 
         /// Returns the block light level at the specified position.
         get-block-light: func(pos: block-pos) -> u8;
 
         /// Sets the block light level at the specified position.
-        set-block-light: func(pos: block-pos, level: u8);
+        set-block-light: async func(pos: block-pos, level: u8);
 
         /// Returns the biome at the specified position.
         get-biome: func(pos: block-pos) -> biome;
 
         /// Spawns an entity of the specified type at the given position.
-        spawn-entity: func(entity-type: entity-type, pos: position) -> entity;
+        spawn-entity: async func(entity-type: entity-type, pos: position) -> entity;
 
         /// Returns a list of all entities in this world.
         get-entities: func() -> list<entity>;
 
         /// Spawns a lightning bolt at the specified position.
-        strike-lightning: func(pos: position, effect-only: bool);
+        strike-lightning: async func(pos: position, effect-only: bool);
 
         /// Performs a raycast from start position to end position to hit blocks.
         ray-trace-blocks: func(start: position, end: position) -> option<position>;
@@ -735,7 +735,7 @@ interface %world {
 
         /// Restores a block entity from raw NBT bytes at the given position.
         /// The NBT must contain a valid "id" field (e.g. "minecraft:chest").
-        set-block-entity-nbt: func(pos: block-pos, nbt-data: list<u8>) -> result<_, string>;
+        set-block-entity-nbt: async func(pos: block-pos, nbt-data: list<u8>) -> result<_, string>;
 
         /// Returns the name of this world (e.g. "world", "world_nether", "arena_1").
         get-name: func() -> string;
@@ -758,7 +758,7 @@ interface %world {
         /// Gets the value of a game rule in this world.
         get-game-rule: func(rule: game-rule) -> game-rule-value;
         /// Sets the value of a game rule in this world.
-        set-game-rule: func(rule: game-rule, value: game-rule-value);
+        set-game-rule: async func(rule: game-rule, value: game-rule-value);
     }
 
     /// Generation phase for custom chunk generation.

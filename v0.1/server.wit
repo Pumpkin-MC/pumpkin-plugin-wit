@@ -29,10 +29,10 @@ interface server {
         get-permission-level: func(id: uuid) -> permission-level;
 
         /// Grants operator status to a player (online or offline) with the specified level and bypass setting.
-        op-player: func(name: string, id: uuid, level: permission-level, bypasses-player-limit: bool);
+        op-player: async func(name: string, id: uuid, level: permission-level, bypasses-player-limit: bool);
 
         /// Revokes operator status from a player (online or offline). Returns true if the player was previously op.
-        deop-player: func(id: uuid) -> bool;
+        deop-player: async func(id: uuid) -> bool;
 
         /// Returns a list of all operator entries on the server.
         list-ops: func() -> list<op-entry>;
@@ -66,7 +66,7 @@ interface server {
         get-player-ban: func(id: uuid) -> option<banned-player-entry>;
 
         /// Bans a player by name and UUID with the specified options (works for online and offline players).
-        ban-player: func(name: string, id: uuid, options: ban-player-options);
+        ban-player: async func(name: string, id: uuid, options: ban-player-options);
 
         /// Removes a player ban by UUID. Returns true if the player was banned.
         unban-player: func(id: uuid) -> bool;
@@ -81,7 +81,7 @@ interface server {
         get-ip-ban: func(ip: string) -> option<banned-ip-entry>;
 
         /// Bans an IP address with the specified options.
-        ban-ip: func(ip: string, options: ban-ip-options);
+        ban-ip: async func(ip: string, options: ban-ip-options);
 
         /// Removes an IP ban. Returns true if the IP was banned.
         unban-ip: func(ip: string) -> bool;
@@ -102,7 +102,7 @@ interface server {
         is-enabled: func() -> bool;
 
         /// Enables or disables the server whitelist. If enabled and enforce-whitelist is set, kicks non-whitelisted players.
-        set-enabled: func(enabled: bool);
+        set-enabled: async func(enabled: bool);
 
         /// Checks if a player UUID is on the whitelist.
         is-whitelisted: func(id: uuid) -> bool;
@@ -111,7 +111,7 @@ interface server {
         add-player: func(name: string, id: uuid) -> bool;
 
         /// Removes a player from the whitelist. Returns true if the player was on the whitelist.
-        remove-player: func(id: uuid) -> bool;
+        remove-player: async func(id: uuid) -> bool;
 
         /// Returns all whitelisted player entries.
         list-entries: func() -> list<whitelist-entry>;
@@ -188,7 +188,7 @@ interface server {
         /// Checks if a world exists by name or dimension.
         has-world: func(name: string) -> bool;
 
-        execute-command: func(command: string, sender: command-sender);
+        execute-command: async func(command: string, sender: command-sender);
 
         /// Creates or loads a world by its name and dimension.
         /// If a world with the given name already exists, it will be returned.
@@ -208,10 +208,10 @@ interface server {
         get-player-count-in-world: func(world-ref: %world) -> u32;
 
         /// Broadcasts a system chat message to all players.
-        broadcast: func(message: string);
+        broadcast: async func(message: string);
 
         /// Broadcasts a tab list header and footer to all players.
-        broadcast-tab-list-header-footer: func(header: text-component, footer: text-component);
+        broadcast-tab-list-header-footer: async func(header: text-component, footer: text-component);
 
         /// Returns the maximum number of players allowed on the server.
         get-max-players: func() -> u32;
