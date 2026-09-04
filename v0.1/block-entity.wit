@@ -9,6 +9,10 @@ interface block-entity {
         get-id: func() -> u32;
         is-dirty: func() -> bool;
         clear-dirty: func();
+        /// Whether this block entity's comparator-relevant content (a container's items, a
+        /// lectern's page, ...).
+        is-comparator-dirty: func() -> bool;
+        clear-comparator-dirty: func();
 
         /// Sets a namespaced custom data value on this block entity.
         set-custom-data: func(namespace: string, key: string, value: nbt-tree);
