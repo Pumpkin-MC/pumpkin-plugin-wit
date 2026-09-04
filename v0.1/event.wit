@@ -6,7 +6,7 @@ interface event {
     use screens.{screen};
     use player.{player};
     use text.{text-component};
-    use %world.{%world};
+    use %world.{%world, chunk, entity};
     use java-packets.{serverbound-packet as java-serverbound-packet, clientbound-packet as java-clientbound-packet};
     use bedrock-packets.{serverbound-packet as bedrock-serverbound-packet, clientbound-packet as bedrock-clientbound-packet};
     use uuid.{uuid};
@@ -210,6 +210,15 @@ interface event {
         cancelled: bool
     }
 
+    record player-interact-entity-event-data {
+        player: player,
+        target: entity,
+        action: entity-interaction-action,
+        target-position: option<position>,
+        sneaking: bool,
+        cancelled: bool
+    }
+
     record inventory-click-event-data {
         player: player,
         window-type: option<screen>,
@@ -338,6 +347,12 @@ interface event {
         new-position: block-pos,
         new-yaw: f32,
         new-pitch: f32
+    }
+
+    record chunk-send-event-data {
+        target-world: %world,
+        chunk: chunk,
+        cancelled: bool
     }
 
     record server-broadcast-event-data {
@@ -1921,6 +1936,7 @@ interface event {
         server-list-ping-event,
         server-load-event,
         spawn-change-event,
+        chunk-send-event,
         server-broadcast-event,
         server-tick-start-event,
         server-tick-end-event,
@@ -2197,6 +2213,7 @@ interface event {
         server-list-ping-event(server-list-ping-event-data),
         server-load-event(server-load-event-data),
         spawn-change-event(spawn-change-event-data),
+        chunk-send-event(chunk-send-event-data),
         server-broadcast-event(server-broadcast-event-data),
         server-tick-start-event(server-tick-start-event-data),
         server-tick-end-event(server-tick-end-event-data),
