@@ -37,7 +37,7 @@ interface context {
         /// * `event-type`: The type of event to listen for.
         /// * `event-priority`: When this handler should be called relative to others.
         /// * `blocking`: Whether the event should wait for this handler to finish.
-        register-event: func(handler-id: u32, event-type: event-type, event-priority: event-priority, blocking: bool);
+        register-event: func(handler-id: u32, event-type: event-type, event-priority: event-priority, blocking: bool) -> result<_, string>;
 
         /// Registers a new command.
         ///

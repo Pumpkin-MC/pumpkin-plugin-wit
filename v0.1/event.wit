@@ -330,6 +330,11 @@ interface event {
         load-type: server-load-type
     }
 
+    record plugin-load-event-data {
+        name: string,
+        version: string,
+    }
+
     record spawn-change-event-data {
         target-world: %world,
         previous-position: block-pos,
@@ -1920,6 +1925,7 @@ interface event {
         server-command-event,
         server-list-ping-event,
         server-load-event,
+        plugin-load-event,
         spawn-change-event,
         server-broadcast-event,
         server-tick-start-event,
@@ -2196,6 +2202,7 @@ interface event {
         server-command-event(server-command-event-data),
         server-list-ping-event(server-list-ping-event-data),
         server-load-event(server-load-event-data),
+        plugin-load-event(plugin-load-event-data),
         spawn-change-event(spawn-change-event-data),
         server-broadcast-event(server-broadcast-event-data),
         server-tick-start-event(server-tick-start-event-data),
