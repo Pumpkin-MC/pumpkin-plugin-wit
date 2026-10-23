@@ -113,6 +113,13 @@ interface bedrock-packets {
     /// Source context that triggered an arm swing.
     swing-source: option<actor-swing-source>,
   }
+  /// Synchronizes block-actor updates from the client, such as edited sign text.
+  record s-block-actor-data {
+    /// World coordinates of the block entity being updated.
+    block-position: tuple<s32, s32, s32>,
+    /// Network NBT compound containing all properties and state of the block entity.
+    actor-data-tags: nbt-tree,
+  }
   /// Sent by the client when picking a targeted block (middle-click / pick block action).
   record s-block-pick-request {
     /// World position coordinates of the targeted block.
@@ -1606,6 +1613,13 @@ interface bedrock-packets {
     /// Fraction of players ticked per frame when throttling is engaged.
     client-throttle-scalar: f32,
   }
+  /// Sent by the server to open the sign text editor on the Bedrock client.
+  record c-open-sign {
+    /// Position of the sign being edited.
+    position: tuple<s32, s32, s32>,
+    /// Whether the front side of the sign is being edited.
+    front-side: bool,
+  }
   /// Sent by the server to inform the client of login results, version compatibility, or player spawn readiness.
   enum c-play-status {
     /// Authentication and login succeeded; client proceeds to resource pack handshake.
@@ -2412,6 +2426,8 @@ interface bedrock-packets {
     s-actor-event(s-actor-event),
     /// Plays animations (arm swing, critical strike particles, waking up) on an actor.
     s-animate(s-animate),
+    /// Synchronizes block-actor updates from the client, such as edited sign text.
+    s-block-actor-data(s-block-actor-data),
     /// Sent by the client when picking a targeted block (middle-click / pick block action).
     s-block-pick-request(s-block-pick-request),
     /// Sent by the client to report cache hits and misses for chunk blobs requested by the server.
@@ -2535,6 +2551,8 @@ interface bedrock-packets {
     c-network-chunk-publisher-update(c-network-chunk-publisher-update),
     /// Sent by the server in response to [`SRequestNetworkSettings`](crate::bedrock::server::request_network_settings::SRequestNetworkSettings) to configure packet compression and client throttling.
     c-network-settings(c-network-settings),
+    /// Sent by the server to open the sign text editor on the Bedrock client.
+    c-open-sign(c-open-sign),
     /// Sent by the server to inform the client of login results, version compatibility, or player spawn readiness.
     c-play-status(c-play-status),
     /// Sent by the server to update the active selected hotbar slot of the player.
